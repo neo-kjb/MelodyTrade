@@ -1,0 +1,57 @@
+{
+  "name": "melody-trade",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/melody-trade/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/melody-trade",
+        "main": "apps/melody-trade/src/main.ts",
+        "tsConfig": "apps/melody-trade/tsconfig.app.json",
+        "assets": ["apps/melody-trade/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/melody-trade/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "melody-trade:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "melody-trade:build:development"
+        },
+        "production": {
+          "buildTarget": "melody-trade:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/melody-trade/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/melody-trade/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
