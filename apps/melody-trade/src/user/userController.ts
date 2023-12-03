@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { hashPassword, isEqualPassword } from "./usecase"
-import { UserService } from "./user.service"
+import { UserService } from "./userService"
 
 export const login= async (req:Request,res:Response)=>{
     try {

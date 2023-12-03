@@ -1,10 +1,10 @@
 import express from "express";
 import { login, signup } from "./userController";
-import { validateSignupMiddleware } from "./middleware";
+import { validateLoginMiddleware, validateSignupMiddleware } from "./middleware";
 
 const router = express.Router()
 
-router.post('/login',login);
+router.post('/login',validateLoginMiddleware,login);
   
 router.post('/signup',validateSignupMiddleware,signup)
 

@@ -2,9 +2,9 @@ post http://localhost:3333/auth/signup
 Content-Type: application/json
 
 {
-    "username":"sjgjgt",
-    "password":"156",
-    "email":"t5est@testt.com"
+    "username":"abc",
+    "password":"123456",
+    "email":"ts5@deeeesttestt.com"
 }
 
 ###
@@ -13,5 +13,5 @@ Content-Type: application/json
 
 {
     "password":"123456",
-    "email":"t5est@testt.com"
+    "email":"t5dest@testt.com"
 }
