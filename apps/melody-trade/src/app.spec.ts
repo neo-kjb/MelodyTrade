@@ -122,7 +122,18 @@ describe('POST /auth/signup',()=>{
                 password: 'password',
               }
               await UserService.createUser(userData)
-              const response=await request(app).post('/auth/signup').send(userData)
+              const response=await request(app).post('/auth/signup').send({username:'anotherName',email:'username@email.com',password:'password'})
+              expect(response.statusCode).toBe(400)
+    
+        })
+        test('return 400 status code for username already exist',async()=>{
+            const userData = {
+                username:'username',
+                email: 'username@email.com',
+                password: 'password',
+              }
+              await UserService.createUser(userData)
+              const response=await request(app).post('/auth/signup').send({username:'username',email:'anotherEmail@email.com',password:'password'})
               expect(response.statusCode).toBe(400)
     
         })
