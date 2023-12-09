@@ -6,8 +6,15 @@ const isEmailUnique = async (email: string) => {
     return !existingUser; 
 };
 
+const isUsernameUnique = async (username: string) => {
+    const existingUser = await UserService.findOneByUsername(username);
+    return !existingUser;
+};
+
 export const SignupInputSchema = z.object({
-    username: z.string().min(3).max(255, { message: 'Username must be between 3 and 255 characters' }),
+    username: z.string().min(3).max(255, { message: 'Username must be between 3 and 255 characters' }).refine(async (value) => {
+        return await isUsernameUnique(value);
+      }, { message: 'Username must be unique' }),
     email: z.string().email({ message: 'Invalid email format' }).refine(async (value) => {
         return await isEmailUnique(value);
     }, { message: 'Email must be unique' }),

@@ -24,4 +24,22 @@ export class UserService {
             },
         });
     }
+    static async findById(id:number) {
+        return await UserDB.findFirst({
+            where: {
+                id: {
+                    equals: id,
+                },
+            },
+        });
+    }
+    static async findOneByUsername(username: string) {
+        return await UserDB.findFirst({
+          where: {
+            username: {
+              equals: username,
+            },
+          },
+        });
+    }
 }
