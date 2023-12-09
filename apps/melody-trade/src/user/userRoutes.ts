@@ -8,6 +8,6 @@ router.post('/login',validateLoginMiddleware,loginCheckCredentials,login);
   
 router.post('/signup',validateSignupMiddleware,signup)
 
-router.get('/:id',getUserDetails)
+router.get('/:nameIn',getUserDetails)
 
 export default router

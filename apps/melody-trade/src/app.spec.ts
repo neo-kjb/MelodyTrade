@@ -139,3 +139,24 @@ describe('POST /auth/signup',()=>{
         })
     })
 })
+
+describe('/auth/:userIn to get user details',()=>{
+    test('return 404 status code for user not found',async()=>{
+        const response=await request(app).get('/auth/noUser123')
+        expect(response.statusCode).toBe(404)
+    })
+
+    test('return the user data and 200 status code',async()=>{
+        const userData = {
+            username:'username1',
+            email: 'username@email.com',
+            password: 'password',
+        }
+        await prisma.user.deleteMany()
+        await UserService.createUser(userData)
+        const response=await request(app).get('/auth/username1')
+        expect(response.statusCode).toBe(200)
+        expect(response.body.id).toBeDefined()
+
+    })
+})

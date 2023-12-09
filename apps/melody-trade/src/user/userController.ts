@@ -28,13 +28,12 @@ export const signup= async(req:Request,res:Response)=>{
 
 export const getUserDetails=async(req:Request,res:Response)=>{
     try {
-        const {id}=req.params
-        const userId = parseInt(id, 10);
-        const user =await UserService.findById(userId)
+        const {nameIn}=req.params
+        const user =await UserService.findOneByUsername(nameIn)
         if(!user){
             return res.status(404).send({message:'User not found'})
         }
-        return res.status(200).send({user})
+        return res.status(200).send(user)
     } catch (error) {
         console.log(error);
         return res.status(500).send({message:error.message})
