@@ -1,22 +1,15 @@
 import { Request, Response } from 'express'
-import { hashPassword, isEqualPassword } from "./usecase"
+import { hashPassword } from "./usecase"
 import { UserService } from "./userService"
 
 export const login= async (req:Request,res:Response)=>{
     try {
-        const {email,password}=req.body
-        const user=await UserService.findOne(email)
-        if(!user){
-            return res.status(404).send({ message: "Invalid credentials" })
-        }
-        const isEqual=await isEqualPassword(password,user.password)
-        if (!isEqual) {
-            return res.status(401).send({ message: "Invalid credentials" });
-          }
-          return res.status(200).send({message:'Login Successfuly',user})
+        const {email}=req.body
+        const user = await UserService.findOne(email);
+        return res.status(200).send({message:'Login Successfuly',user})
     } catch (error) {
         console.log(error)
-        res.status(500).send({message:error.message})        
+        return res.status(500).send({message:error.message})        
     }
 }
 
@@ -29,6 +22,6 @@ export const signup= async(req:Request,res:Response)=>{
         return res.status(201).send({message:'User created successfully', user})
     } catch (error) {
         console.log(error);
-        res.status(500).send({ message: error.message });
+        return res.status(500).send({ message: error.message });
     }
 }
