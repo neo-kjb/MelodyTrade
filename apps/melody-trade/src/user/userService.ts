@@ -1,4 +1,4 @@
-import { PrismaClient,Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 const UserDB=prisma.user
 
@@ -12,7 +12,7 @@ interface user{
 
 export class UserService {
     static async createUser(data: user) {
-        await UserDB.create({ data });
+        return await UserDB.create({ data });
     }
 
     static async findOne(email: string) {

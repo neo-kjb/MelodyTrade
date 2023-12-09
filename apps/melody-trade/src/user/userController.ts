@@ -23,10 +23,10 @@ export const login= async (req:Request,res:Response)=>{
 export const signup= async(req:Request,res:Response)=>{
     try {
         const { username, email, password } = req.body
-        const hashedPW =await  hashPassword(password)
+        const hashedPW = await hashPassword(password)
         const data={ username, email, password:hashedPW }
-        await UserService.createUser(data)
-        return res.status(201).send({message:'User created successfully'})
+        const user = await UserService.createUser(data)
+        return res.status(201).send({message:'User created successfully', user})
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
