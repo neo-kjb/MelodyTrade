@@ -2,8 +2,8 @@ post http://localhost:3333/auth/signup
 Content-Type: application/json
 
 {
-    "username":"abc",
-    "password":"123456",
+    "username":"c",
+    "password":"1256",
     "email":"tjfjfs5@deeeesttestt.com"
 }
 
@@ -14,4 +14,16 @@ Content-Type: application/json
 {
     "password":"123456",
     "email":"t5dest@testt.com"
+}
+
+###
+POST http://localhost:3333/disks/add
+Content-Type: application/json
+
+{
+  "name": "diskName",
+  "description": "description",
+  "location": "Somewhere",
+  "imageURL": "https://someUrl.com",
+  "userId": 292
 }
