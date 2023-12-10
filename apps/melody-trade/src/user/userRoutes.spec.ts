@@ -1,26 +1,26 @@
 import request from 'supertest'
-import app from './app'
-import { UserService } from './user/userService'
-import { hashPassword, isEqualPassword } from './user/usecase'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient
-
-
+import app from '../app'
+import { UserService } from './userService'
+import { isEqualPassword,hashPassword } from './usecase'
 
 describe('POST /auth/login',()=>{
-    beforeEach(async () => {
-        await prisma.user.deleteMany();
-      
-        const userData = {
-          username: 'username',
-          email: 'username@email.com',
-          password: await hashPassword('password'),
-        };
-        await UserService.createUser(userData);
-      });
-
+    beforeAll(async()=>{
+        await UserService.deleteAllUsers()
+    })
     describe('Given a username and password',()=>{
+        beforeAll(async()=>{
+            await UserService.deleteAllUsers()
+            const userData = {
+                username: 'username',
+                email: 'username@email.com',
+                password: await hashPassword('password'),
+              };
+              await UserService.createUser(userData);
+        })
+        
+        afterAll(async () => {
+            await UserService.deleteAllUsers();
+        });
         const loginRequestBody = {
             email: 'username@email.com',
             password: 'password',
@@ -42,6 +42,18 @@ describe('POST /auth/login',()=>{
     })
 
     describe('when username and password missing',()=>{
+        beforeAll(async()=>{
+            await UserService.deleteAllUsers()
+            const userData = {
+                username: 'username',
+                email: 'username@email.com',
+                password: await hashPassword('password'),
+              };
+              await UserService.createUser(userData);
+        })
+        afterAll(async()=>{
+            await UserService.deleteAllUsers()
+        })
         test('should respond with 400 status code for validation error',async()=>{
 
             const bodyData=[
@@ -73,10 +85,17 @@ describe('POST /auth/login',()=>{
 })
 
 describe('POST /auth/signup',()=>{
-    beforeEach(async()=>{
-        await prisma.user.deleteMany()
+
+    afterAll(async()=>{
+        await UserService.deleteAllUsers()
     })
     describe('given username, email and password',()=>{
+        beforeEach(async()=>{
+            await UserService.deleteAllUsers()
+        })
+        afterEach(async()=>{
+            await UserService.deleteAllUsers()
+        })
         const signupRequestBody = {
             username:'username',
             email: 'username@email.com',
@@ -84,7 +103,7 @@ describe('POST /auth/signup',()=>{
           }
 
         test('password hashed correctly',async()=>{
-            const response= await request(app).post('/auth/signup').send(signupRequestBody)
+            const response= await request(app).post('/auth/signup').send(signupRequestBody)           
             const isEqual=await isEqualPassword(signupRequestBody.password,response.body.user.password)
             expect(isEqual).toBe(true)
         })
@@ -93,7 +112,7 @@ describe('POST /auth/signup',()=>{
             expect(response.statusCode).toBe(201)
         })
         test('response has user id',async()=>{
-            const response=await request(app).post('/auth/signup').send(signupRequestBody)
+            const response=await request(app).post('/auth/signup').send(signupRequestBody)            
             expect(response.body.user.id).toBeDefined()
         })
         test('should specify JSON in the content type header',async()=>{
@@ -103,6 +122,9 @@ describe('POST /auth/signup',()=>{
     })
 
     describe('missing username, email and password',()=>{
+        afterEach(async()=>{
+            await UserService.deleteAllUsers()
+        })
         test('return 400 status code for validation fail',async()=>{
             const bodyData=[
                 {email:'username@email.com'},
@@ -140,7 +162,10 @@ describe('POST /auth/signup',()=>{
     })
 })
 
-describe('/auth/:userIn to get user details',()=>{
+describe('POST get user details',()=>{
+    afterAll(async()=>{
+        await UserService.deleteAllUsers()
+    })
     test('return 404 status code for user not found',async()=>{
         const response=await request(app).get('/auth/noUser123')
         expect(response.statusCode).toBe(404)
@@ -152,11 +177,11 @@ describe('/auth/:userIn to get user details',()=>{
             email: 'username@email.com',
             password: 'password',
         }
-        await prisma.user.deleteMany()
+        await UserService.deleteAllUsers()
         await UserService.createUser(userData)
         const response=await request(app).get('/auth/username1')
         expect(response.statusCode).toBe(200)
         expect(response.body.id).toBeDefined()
 
     })
-})
+})  
