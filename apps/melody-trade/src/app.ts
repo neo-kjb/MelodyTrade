@@ -1,9 +1,11 @@
 import express from 'express';
-import userRoutes from './user/userRoutes';
+import usersRoutes from './user/userRoutes';
+import disksRoutes from './disk/diskRoutes'
 const app = express();
 app.use(express.json())
 
-app.use('/auth',userRoutes)
+app.use('/auth',usersRoutes)
+app.use('/disks',disksRoutes)
 
 
 
