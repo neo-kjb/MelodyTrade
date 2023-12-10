@@ -12,7 +12,7 @@ const isUsernameUnique = async (username: string) => {
 };
 
 export const SignupInputSchema = z.object({
-    username: z.string().min(3).max(255, { message: 'Username must be between 3 and 255 characters' }).refine(async (value) => {
+    username: z.string().min(3, { message: 'Username must be between 3 and 255 characters' }).max(255, { message: 'Username must be between 3 and 255 characters' }).refine(async (value) => {
         return await isUsernameUnique(value);
       }, { message: 'Username must be unique' }),
     email: z.string().email({ message: 'Invalid email format' }).refine(async (value) => {
