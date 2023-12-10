@@ -42,4 +42,12 @@ export class UserService {
           },
         });
     }
+    static async deleteUser(userId: number) {
+        return await UserDB.delete({
+          where: { id: userId },
+        });
+      }
+    static async deleteAllUsers() {
+        return await UserDB.deleteMany();
+      }
 }
