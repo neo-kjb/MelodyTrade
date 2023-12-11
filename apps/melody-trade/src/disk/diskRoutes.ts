@@ -1,9 +1,9 @@
 import express from "express";
-import { createDisk } from "./diskController";
+import { createDisk, getDisks } from "./diskController";
 import { validateDiskInputMiddleware } from "./middleware";
 const router = express.Router()
 
-router.get('/')
+router.get('/',getDisks)
 router.post('/add',validateDiskInputMiddleware,createDisk)
 router.get('/:id')
 router.put('/:id/edit')
