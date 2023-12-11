@@ -52,4 +52,7 @@ export class DiskService {
       },
     });
   }
+  static async deleteAllDisks() {
+    return await diskDB.deleteMany();
+  }
 }

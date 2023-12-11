@@ -1,8 +1,16 @@
 import app from'../app'
 import request from 'supertest'
 import { UserService } from '../user/userService'
-import { DiskInput } from './validation'
+import { DiskService } from './diskService';
 
+interface Disk {
+    name : string,
+    description : string,
+    location : string,
+    imageURL : string,
+    userId : number
+
+}
 
 describe('Disk Routes',()=>{
     describe('Adding Disk Route',()=>{
@@ -13,7 +21,7 @@ describe('Disk Routes',()=>{
             await UserService.deleteAllUsers()
         })
         describe('When data is valid',()=>{
-            let data:DiskInput
+            let data:Disk
             beforeAll(async()=>{
                 await UserService.deleteAllUsers()
                 const user= await UserService.createUser({username:'username',email:'username@email.com',password:'password'})
@@ -89,4 +97,42 @@ describe('Disk Routes',()=>{
         })
 
     })
-})
+    describe('Retrieving Disks Route', () => {
+        afterEach(async () => {
+          await DiskService.deleteAllDisks();
+        });
+      
+        test('should return 200 status code with message for an empty database', async () => {
+          const response = await request(app).get('/disks');
+          expect(response.statusCode).toBe(200);          
+          expect(response.body.message).toBe('No disks found');
+        });
+      
+        test('should return 200 status code with disk data for a non-empty database', async () => {
+          await UserService.deleteAllUsers()
+          const user = await UserService.createUser({
+            username: 'username',
+            email: 'username@email.com',
+            password: 'password',
+          });
+      
+          const diskData = {
+            name: 'diskName',
+            description: 'description',
+            location: 'Somewhere',
+            imageURL: 'https://someUrl.com',
+            userId: user.id,
+          };
+      
+          await DiskService.createDisk(diskData);
+      
+          const response = await request(app).get('/disks');
+          expect(response.statusCode).toBe(200);
+          expect(response.body.count).toBe(1);
+          expect(response.body.data).toHaveLength(1);
+          expect(response.body.data[0].id).toBeDefined();
+      
+          await UserService.deleteAllUsers();
+        });
+      });
+});
