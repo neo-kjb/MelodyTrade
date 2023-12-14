@@ -135,4 +135,42 @@ describe('Disk Routes',()=>{
           await UserService.deleteAllUsers();
         });
       });
+
+      describe('Getting Disk Details',()=>{
+        afterAll( async()=>{
+          await UserService.deleteAllUsers()
+          await DiskService.deleteAllDisks()
+        })
+        test('should return 200 status code with disk details for a valid disk ID', async () => {
+          await UserService.deleteAllUsers()
+          const user = await UserService.createUser({
+            username: 'username',
+            email: 'username@email.com',
+            password: 'password',
+          });
+          const createdDisk = await DiskService.createDisk({
+            name: 'TestDisk',
+            description: 'TestDescription',
+            location: 'TestLocation',
+            imageURL: 'https://testurl.com',
+            userId: user.id
+          });          
+          const response = await request(app).get(`/disks/${createdDisk.id}`);        
+          expect(response.statusCode).toBe(200);
+          
+          expect(response.body.id).toBe(createdDisk.id);
+          expect(response.body.name).toBe(createdDisk.name);
+          
+          expect(response.body.user.id).toBe(user.id);
+          expect(response.body.user.username).toBe(user.username);
+          });
+
+        test('should return 404 status code for an invalid disk ID', async () => {
+            const invalidDiskId = 6876876876876876
+            const response = await request(app).get(`/disks/${invalidDiskId}`);
+            expect(response.statusCode).toBe(404);
+            expect(response.body.message).toBe('No disk found');
+        });
+
+      })
 });
