@@ -2,9 +2,9 @@ post http://localhost:3333/auth/signup
 Content-Type: application/json
 
 {
-    "username":"c",
-    "password":"1256",
-    "email":"tjfjfs5@deeeesttestt.com"
+    "username":"anas",
+    "password":"123456",
+    "email":"anas@email.com"
 }
 
 ###
@@ -13,9 +13,12 @@ Content-Type: application/json
 
 {
     "password":"123456",
-    "email":"t5dest@testt.com"
+    "email":"anas@email.com"
 }
 
+###
+GET http://localhost:3333/auth/anas
+Authorization : bearer eyJhbGciOiJIUzIj1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYwMiwiaWF0IjoxNzAyNTMxNDc1LCJleHAiOjE3MDI1MzUwNzV9.zaKw0GO0QtA_5wO0T3X4exLJtS4bCDUiJq_GCYYKzZI
 ###
 POST http://localhost:3333/disks/add
 Content-Type: application/json

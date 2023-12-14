@@ -1,7 +1,9 @@
+import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express';
 import { validateSignupInput, SignupInput, LoginInput, validateLoginInput } from './validation';
 import { UserService } from './userService';
 import { isEqualPassword } from './usecase';
+
 
 export const validateSignupMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -44,5 +46,28 @@ export const loginCheckCredentials = async (req:Request, res:Response, next:Next
       console.error("Error in loginCheckCredentials:", error);
       return res.status(500).send({ message: "Internal Server Error" });
     }
+  };
+  
+
+  export const isAuth = (req:Request, res:Response, next:NextFunction) => {
+    const authHeader = req.get("Authorization");
+    if (!authHeader) {
+      return res.status(401).send({ message: "Not Authenticated" });
+    }
+    const token = authHeader.split(" ")[1];
+    let decodedToken
+    try {
+      decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ message: error.message });
+    }
+    if (!decodedToken) {
+      return res.status(401).send({ message: "Not Authenticated" });
+    }
+    console.log(decodedToken.id);
+    
+      req.reqUserId  = decodedToken.id;
+    next();
   };
   
