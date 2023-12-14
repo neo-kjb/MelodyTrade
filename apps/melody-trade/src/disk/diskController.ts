@@ -19,3 +19,18 @@ export const getDisks=async(req:Request,res:Response)=>{
     return res.status(500).send({ message: 'Internal Server Error' });
   }
 }
+
+export const getDiskDetails=async(req:Request,res:Response) =>{
+  try {
+    const diskId = parseInt(req.params.id, 10) 
+    const disk = await DiskService.getDiskById(diskId)
+    
+    if( ! disk ){
+      return res.status(404).send( { message: 'No disk found' } )
+    }
+    return res.status(200).send(disk)
+  } catch (error) {
+    console.error('Error getting disk:', error);
+    return res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
