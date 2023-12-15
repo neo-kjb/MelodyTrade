@@ -39,6 +39,10 @@ describe('POST /auth/login',()=>{
             const response=await request(app).post('/auth/login').send(loginRequestBody)
             expect(response.body.user.id).toBeDefined()
         })
+        test('response has access token', async () =>{
+            const response=await request(app).post('/auth/login').send(loginRequestBody)
+            expect(response.body.accessToken).toBeDefined()
+        })
     })
 
     describe('when username and password missing',()=>{
@@ -114,6 +118,10 @@ describe('POST /auth/signup',()=>{
         test('response has user id',async()=>{
             const response=await request(app).post('/auth/signup').send(signupRequestBody)            
             expect(response.body.user.id).toBeDefined()
+        })
+        test('response has access token', async () =>{
+            const response=await request(app).post('/auth/signup').send(signupRequestBody)
+            expect(response.body.accessToken).toBeDefined()
         })
         test('should specify JSON in the content type header',async()=>{
             const response=await request(app).post('/auth/signup').send(signupRequestBody)
