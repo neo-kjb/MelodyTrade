@@ -64,9 +64,7 @@ export const loginCheckCredentials = async (req:Request, res:Response, next:Next
     }
     if (!decodedToken) {
       return res.status(401).send({ message: "Not Authenticated" });
-    }
-    console.log(decodedToken.id);
-    
+    }    
       req.reqUserId  = decodedToken.id;
     next();
   };

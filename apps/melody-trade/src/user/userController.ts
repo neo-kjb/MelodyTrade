@@ -1,12 +1,21 @@
 import { Request, Response } from 'express'
 import { hashPassword } from "./usecase"
 import { UserService } from "./userService"
+import jwt from 'jsonwebtoken'
 
 export const login= async (req:Request,res:Response)=>{
     try {
         const {email}=req.body
         const user = await UserService.findOne(email);
-        return res.status(200).send({message:'Login Successfuly',user})
+        const {id} = user
+        const accessToken = jwt.sign(
+            { id },
+            process.env.TOKEN_KEY,
+            {
+              expiresIn: "1h",
+            }
+          );
+        return res.status(200).send({message:'Login Successfuly',user,accessToken})
     } catch (error) {
         console.log(error)
         return res.status(500).send({message:error.message})        
@@ -19,7 +28,14 @@ export const signup= async(req:Request,res:Response)=>{
         const hashedPW = await hashPassword(password)
         const data={ username, email, password:hashedPW }
         const user = await UserService.createUser(data)
-        return res.status(201).send({message:'User created successfully', user})
+        const accessToken = jwt.sign(
+            { d:user.id },
+            process.env.TOKEN_KEY,
+            {
+              expiresIn: "1h",
+            }
+          );
+        return res.status(201).send({message:'User created successfully', user,accessToken})
     } catch (error) {
         console.log(error);
         return res.status(500).send({ message: error.message });
