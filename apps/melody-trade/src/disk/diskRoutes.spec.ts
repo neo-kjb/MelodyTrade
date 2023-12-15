@@ -11,7 +11,7 @@ interface Disk {
 }
 
 describe('Disk Routes',()=>{
-    describe('Adding Disk Route',()=>{
+    describe('/add Adding Disk Route',()=>{
         beforeAll(async()=>{ 
             await UserService.deleteAllUsers()
         })
@@ -131,7 +131,7 @@ describe('Disk Routes',()=>{
         })
 
     })
-    describe('Retrieving Disks Route', () => {
+    describe('/ Retrieving Disks Route', () => {
         afterEach(async () => {
           await DiskService.deleteAllDisks();
         });
@@ -170,7 +170,7 @@ describe('Disk Routes',()=>{
         });
       });
 
-      describe('Getting Disk Details',()=>{
+      describe('GET/:id Getting Disk Details',()=>{
         afterAll( async()=>{
           await UserService.deleteAllUsers()
           await DiskService.deleteAllDisks()
@@ -206,5 +206,106 @@ describe('Disk Routes',()=>{
             expect(response.body.message).toBe('No disk found');
         });
 
+      })
+
+      describe('PUT/:id/edit edit disk data route',()=>{
+        const data ={
+          name: 'diskName',
+          description: 'description',
+          location: 'Somewhere',
+          imageURL: 'https://someUrl.com',
+        }
+        const updatedData ={
+          name: 'updatedDiskName',
+          description: 'updatedDescription',
+          location: 'updatedSomewhere',
+          imageURL: 'https://updatedSomeUrl.com',
+        }
+        let user1AccessToken:string
+        let user2AccessToken:string
+        beforeAll(async()=>{
+          await UserService.deleteAllUsers()
+          await DiskService.deleteAllDisks()
+          await request(app)
+                .post('/auth/signup')
+                .send({
+                  username: 'username',
+                  email: 'username@email.com',
+                  password: 'password',
+                });
+          await request(app)
+                .post('/auth/signup')
+                .send({
+                  username: 'username2',
+                  email: 'username2@email.com',
+                  password: 'password',
+                });
+                  const loginResponse1 = await request(app).post('/auth/login').send({
+                  email: 'username@email.com',
+                  password: 'password',
+                });
+                const loginResponse2 = await request(app).post('/auth/login').send({
+                  email: 'username2@email.com',
+                  password: 'password',
+                });
+                user1AccessToken = loginResponse1.body.accessToken;
+                user2AccessToken = loginResponse2.body.accessToken;
+        })
+        afterAll( async()=>{
+          await UserService.deleteAllUsers()
+          await DiskService.deleteAllDisks()
+        })
+
+        test('should respond with 401 if not authenticated', async () => {      
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+          
+          const editResponse = await request(app)
+            .put(`/disks/${addResponse.body.disk.id}/edit`)
+            .set('Authorization', `Bearer ${user2AccessToken}`)
+            .send(updatedData);            
+
+          expect(editResponse.status).toBe(401);
+          expect(editResponse.body.message).toBe('Not Authenticated');
+        });
+      
+        test('should update disk and respond with 200 if authenticated', async () => {
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+          const editResponse = await request(app)
+            .put(`/disks/${addResponse.body.disk.id}/edit`)
+            .set('Authorization', `Bearer ${user1AccessToken}`)
+            .send(updatedData);
+      
+          expect(editResponse.status).toBe(200);
+          expect(editResponse.body.message).toBe('Disk updated successfully');
+          expect(editResponse.body.updatedDisk.name).toBe('updatedDiskName');
+        });
+        test('should respond with 400 for invalid input', async () => {
+          const invalidData = {
+            name: 'd',
+            description: 'd',
+            location: 'd',
+            imageURL: 'd'
+          };
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+          
+          const editResponse = await request(app)
+            .put(`/disks/${addResponse.body.disk.id}/edit`)  
+            .set('Authorization', `Bearer ${user1AccessToken}`)
+            .send(invalidData);
+      
+          expect(editResponse.status).toBe(400)
+          expect(editResponse.body.message).toBe('Invalid input')
+          expect(editResponse.body.errors).toBeDefined()
+        });
+        
       })
 });
