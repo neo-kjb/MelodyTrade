@@ -131,7 +131,7 @@ describe('Disk Routes',()=>{
         })
 
     })
-    describe('/ Retrieving Disks Route', () => {
+    describe('GET/ Retrieving Disks Route', () => {
         afterEach(async () => {
           await DiskService.deleteAllDisks();
         });
@@ -308,4 +308,109 @@ describe('Disk Routes',()=>{
         });
         
       })
+
+      describe('DELETE /:id  delete disk route', () => {
+        const data ={
+          name: 'diskName',
+          description: 'description',
+          location: 'Somewhere',
+          imageURL: 'https://someUrl.com',
+        }
+        let user1AccessToken
+        let user2AccessToken
+        beforeAll(async()=>{
+          await UserService.deleteAllUsers()
+          await DiskService.deleteAllDisks()
+          await request(app)
+                .post('/auth/signup')
+                .send({
+                  username: 'username',
+                  email: 'username@email.com',
+                  password: 'password',
+                });
+          await request(app)
+                .post('/auth/signup')
+                .send({
+                  username: 'username2',
+                  email: 'username2@email.com',
+                  password: 'password',
+                });
+                  const loginResponse1 = await request(app).post('/auth/login').send({
+                  email: 'username@email.com',
+                  password: 'password',
+                });
+                const loginResponse2 = await request(app).post('/auth/login').send({
+                  email: 'username2@email.com',
+                  password: 'password',
+                });
+                user1AccessToken = loginResponse1.body.accessToken;
+                user2AccessToken = loginResponse2.body.accessToken;
+        })
+        afterAll(async()=>{
+          await DiskService.deleteAllDisks()
+          await UserService.deleteAllUsers()
+        })
+
+        test('should return 401 status code for invalid token', async () => {
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+
+          const deleteResponse = await request(app)
+          .delete(`/disks/${addResponse.body.disk.id}`)  
+          .set('Authorization', `Bearer ${user2AccessToken}`)
+          expect(deleteResponse.statusCode).toBe(401)
+          expect(deleteResponse.body.message).toBe('Not Authenticated')
+        })
+
+        test('should return 500 status code for malformed token', async () => {
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+
+          const deleteResponse = await request(app)
+          .delete(`/disks/${addResponse.body.disk.id}`)  
+          .set('Authorization', `Bearer asdasd`)
+
+          expect(deleteResponse.statusCode).toBe(500)
+        })
+
+        test("should return 404 status code for the disk absence",async () => {
+
+          const deleteResponse = await request(app)
+          .delete(`/disks/00`)  
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+
+          expect(deleteResponse.statusCode).toBe(404)
+          expect(deleteResponse.body.message).toBe('No disk found')
+        });
+
+        test('should return 200 status code for success',async () => {
+          const addResponse=await request(app)
+          .post('/disks/add')
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+          .send(data)
+
+          const deleteResponse = await request(app)
+          .delete(`/disks/${addResponse.body.disk.id}`)  
+          .set('Authorization', `Bearer ${user1AccessToken}`)
+
+          const deletedDisk = await DiskService.getDiskById(addResponse.body.disk.id)
+          
+          expect(deleteResponse.statusCode).toBe(200)
+          expect(deleteResponse.body.message).toBe('Disk deleted successfully')
+          expect(deletedDisk).toBeNull()
+        })
+        
+        
+        
+
+
+        
+
+
+      })
+      
 });
