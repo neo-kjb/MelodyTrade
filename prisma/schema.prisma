@@ -38,6 +38,7 @@ model Swap {
   receiverId      Int
   sentItemId      Int
   receivedItemId  Int
+  status          String
   sentItem        Item      @relation("sentItem", fields: [sentItemId], references: [id])
   receivedItem    Item      @relation("receivedItem", fields: [receivedItemId], references: [id])
   sender          User      @relation("sender", fields: [senderId], references: [id])
