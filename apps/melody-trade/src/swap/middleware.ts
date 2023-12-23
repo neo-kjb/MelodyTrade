@@ -1,13 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import { DiskService } from '../disk/diskService';
+import { SwapService } from './swapService';
 
 export const validateSwapRequest = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const senderId = req.reqUserId
         const { sentItemId, receivedItemId } = req.body
 
+        const existingSwap = await SwapService.getPendingSwapByItems(senderId, sentItemId, receivedItemId);
+        if (existingSwap) {
+            return res.status(400).send({ message: 'Duplicate swap request for the same items' });
+        }
+
         const sentItem = await DiskService.getDiskById(sentItemId)
         const receivedItem = await DiskService.getDiskById(receivedItemId)
+
         if (!sentItem || !receivedItem) {
             return res.status(404).send({ message: 'Invalid item id' });
         }

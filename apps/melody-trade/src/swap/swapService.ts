@@ -43,5 +43,17 @@ export class SwapService {
 
         return pendingSwaps;
     }
+
+    static async getPendingSwapByItems(senderId: number, sentItemId: number, receivedItemId: number) {
+        return await swapDB.findFirst({
+            where: {
+                senderId,
+                sentItemId,
+                receivedItemId,
+                status: 'pending',
+            },
+        });
+    }
+
 }
 

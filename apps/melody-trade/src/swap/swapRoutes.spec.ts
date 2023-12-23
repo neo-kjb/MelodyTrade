@@ -140,6 +140,27 @@ describe('Swap Routes', () => {
       expect(swapResponse.statusCode).toBe(400)
 
     })
+
+    test('should return 400 status code for duplicate swap request for the same items', async () => {
+      await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk1.id,
+          receivedItemId: disk2.id
+        })
+      const swapResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk1.id,
+          receivedItemId: disk2.id
+        })
+      expect(swapResponse.statusCode).toBe(400)
+      expect(swapResponse.body.message).toBe('Duplicate swap request for the same items')
+
+    })
+
   })
 
 
@@ -158,7 +179,6 @@ describe('Swap Routes', () => {
       const getPendingSwapsResponse = await request(app)
         .get('/swaps')
         .set('Authorization', `Bearer ${user1AccessToken}`)
-      console.log(getPendingSwapsResponse.body, getPendingSwapsResponse.statusCode);
 
       expect(getPendingSwapsResponse.statusCode).toBe(200)
       expect(getPendingSwapsResponse.body.count).toBe(1)
