@@ -21,3 +21,25 @@ export const getPendingSwapsForUser = async (req: Request, res: Response) => {
         return res.status(500).send({ message: 'Internal Server Error' });
     }
 };
+
+export const getSwapDetails = async (req: Request, res: Response) => {
+    try {
+        const swapId = parseInt(req.params.swapId, 10);
+        if (isNaN(swapId) || swapId <= 0) {
+            return res.status(400).send({ message: 'Invalid swap ID' });
+        }
+        const swap = await SwapService.getSwapDetails(swapId);
+        if (!swap) {
+            return res.status(404).send({ message: 'Swap not found' });
+        }
+
+        const userId = req.reqUserId;
+        if (swap.senderId !== userId && swap.receiverId !== userId) {
+            return res.status(401).send({ message: 'Unauthorized access to swap details' });
+        }
+        res.status(200).send({ swap });
+    } catch (error) {
+        console.log('Error getting swap details:', error);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+};

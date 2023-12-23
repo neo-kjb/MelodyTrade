@@ -15,10 +15,9 @@ interface Swap {
 
 export class SwapService {
     static async createSwap(data: Swap) {
-        const swap = await swapDB.create({
+        return await swapDB.create({
             data
         });
-        return swap
     }
 
     static async deleteAllSwaps() {
@@ -26,8 +25,7 @@ export class SwapService {
     }
 
     static async getPendingSwapsForUser(userId: number) {
-
-        const pendingSwaps = await swapDB.findMany({
+        return await swapDB.findMany({
             where: {
                 status: 'pending',
                 OR: [
@@ -40,8 +38,6 @@ export class SwapService {
                 receivedItem: true,
             },
         });
-
-        return pendingSwaps;
     }
 
     static async getPendingSwapByItems(senderId: number, sentItemId: number, receivedItemId: number) {
@@ -51,6 +47,18 @@ export class SwapService {
                 sentItemId,
                 receivedItemId,
                 status: 'pending',
+            },
+        });
+    }
+
+    static async getSwapDetails(swapId: number) {
+        return await swapDB.findFirst({
+            where: { id: swapId },
+            include: {
+                sentItem: true,
+                receivedItem: true,
+                sender: true,
+                receiver: true,
             },
         });
     }
