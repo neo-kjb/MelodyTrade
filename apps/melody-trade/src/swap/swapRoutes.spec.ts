@@ -192,6 +192,73 @@ describe('Swap Routes', () => {
 
 
   })
+  describe('GET /:swapId getting swap details', () => {
+    beforeEach(async () => {
+      await SwapService.deleteAllSwaps()
+    })
+    test('should return 200 status code and swap detail', async () => {
+      const createSwapResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk3.id,
+          receivedItemId: disk2.id
+        })
+
+      const getSwapDetailsResponse = await request(app)
+        .get(`/swaps/${createSwapResponse.body.swap.id}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+      expect(getSwapDetailsResponse.statusCode).toBe(200)
+      expect(getSwapDetailsResponse.body.swap.id).toBe(createSwapResponse.body.swap.id)
+    })
+
+    test('should return 404 status code for swap not found', async () => {
+      const getSwapDetailsResponse = await request(app)
+        .get('/swaps/11')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+      expect(getSwapDetailsResponse.statusCode).toBe(404)
+      expect(getSwapDetailsResponse.body.message).toBe('Swap not found')
+    })
+
+    test('should return 400 status code for invalid swap ID', async () => {
+      const getSwapDetailsResponse = await request(app)
+        .get('/swaps/invalidStringId')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+      expect(getSwapDetailsResponse.statusCode).toBe(400)
+      expect(getSwapDetailsResponse.body.message).toBe('Invalid swap ID')
+    })
+
+    test('should return 401 status code for unauthorized user', async () => {
+      await request(app)
+        .post('/auth/signup')
+        .send({
+          username: 'anotherusername',
+          email: 'anotherusername@email.com',
+          password: 'password',
+        });
+      const loginResponse = await request(app).post('/auth/login').send({
+        email: 'anotherusername@email.com',
+        password: 'password',
+      });
+      const anotherUserAccessToken = loginResponse.body.accessToken;
+      const createSwapResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk3.id,
+          receivedItemId: disk2.id
+        })
+
+      const getSwapDetailsResponse = await request(app)
+        .get(`/swaps/${createSwapResponse.body.swap.id}`)
+        .set('Authorization', `Bearer ${anotherUserAccessToken}`)
+
+      expect(getSwapDetailsResponse.statusCode).toBe(401)
+      expect(getSwapDetailsResponse.body.message).toBe('Unauthorized access to swap details')
+    })
+
+
+  })
 
 
 })
