@@ -44,7 +44,6 @@ export const acceptSwap = async (req: Request, res: Response) => {
     }
 
 }
-
 export const rejectSwap = async (req: Request, res: Response) => {
     try {
         const swapId = parseInt(req.params.swapId, 10);

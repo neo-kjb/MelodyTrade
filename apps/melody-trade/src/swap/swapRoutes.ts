@@ -10,5 +10,4 @@ router.get('/:swapId', isAuth, validateSwapId('bothUsers'), getSwapDetails)
 router.put('/:swapId/accept', isAuth, validateSwapId('receiverOnly'), acceptSwap)
 router.put('/:swapId/reject', isAuth, validateSwapId('receiverOnly'), rejectSwap)
 
-
 export default router
