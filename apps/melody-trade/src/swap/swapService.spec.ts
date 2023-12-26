@@ -166,4 +166,61 @@ describe('SwapService', () => {
         expect(updatedSwap.status).toBe('accepted')
     })
 
+    test('getSwapDetails should return details for a specific swap', async () => {
+        const diskA = await DiskService.createDisk(diskData1)
+        const diskB = await DiskService.createDisk(diskData2)
+        const swapData = {
+            senderId: user1Id,
+            receiverId: user2Id,
+            sentItemId: diskA.id,
+            receivedItemId: diskB.id,
+            status: 'pending'
+        }
+
+
+
+        const createdSwap = await swapDB.create({ data: swapData })
+
+        const result = await SwapService.getSwapDetails(createdSwap.id)
+
+        expect(result).toBeDefined()
+        expect(result.senderId).toBe(swapData.senderId)
+        expect(result.receiverId).toBe(swapData.receiverId)
+    })
+
+    test('getSwapDetails should return null for non-existent swap', async () => {
+        const result = await SwapService.getSwapDetails(0)
+
+        expect(result).toBeNull()
+    })
+
+    test('deleteAllSwaps should delete all swaps', async () => {
+        const diskA = await DiskService.createDisk(diskData1)
+        const diskB = await DiskService.createDisk(diskData2)
+        const swapData1 = {
+            senderId: user1Id,
+            receiverId: user2Id,
+            sentItemId: diskA.id,
+            receivedItemId: diskB.id,
+            status: 'pending'
+        }
+
+        const swapData2 = {
+            senderId: user1Id,
+            receiverId: user2Id,
+            sentItemId: diskA.id,
+            receivedItemId: diskB.id,
+            status: 'accepted'
+        }
+
+        await swapDB.create({ data: swapData1 })
+        await swapDB.create({ data: swapData2 })
+
+        await SwapService.deleteAllSwaps()
+
+        const swapsAfterDeletion = await swapDB.findMany()
+
+        expect(swapsAfterDeletion).toHaveLength(0)
+    })
+
 })
