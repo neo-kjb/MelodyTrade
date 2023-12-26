@@ -384,6 +384,66 @@ describe('Swap Routes', () => {
 
   })
 
+  describe('PUT /:swapId/cancel cancel swap route', () => {
+    beforeEach(async () => {
+      await SwapService.deleteAllSwaps()
+    })
+    test('should return 200 status code and a swap status of -canceled- and the receiver only should be the canceler', async () => {
+      const createSwapResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk3.id,
+          receivedItemId: disk2.id
+        })
+
+      const acceptSwapResponse = await request(app)
+        .put(`/swaps/${createSwapResponse.body.swap.id}/cancel`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+
+      expect(acceptSwapResponse.statusCode).toBe(200)
+      expect(acceptSwapResponse.body.updatedSwap.id).toBe(createSwapResponse.body.swap.id)
+      expect(acceptSwapResponse.body.updatedSwap.status).toBe('canceled')
+      expect(acceptSwapResponse.body.updatedSwap.receiverId).toBe(user2Id)
+    })
+
+    test('should return 400 status code for invalid swap ID', async () => {
+      const acceptSwapResponse = await request(app)
+        .put('/swaps/invalidStringId/cancel')
+        .set('Authorization', `Bearer ${user2AccessToken}`)
+      expect(acceptSwapResponse.statusCode).toBe(400)
+      expect(acceptSwapResponse.body.message).toBe('Invalid swap ID')
+    })
+    test('should return 404 status code for swap not found', async () => {
+      const acceptSwapResponse = await request(app)
+        .put('/swaps/11/cancel')
+        .set('Authorization', `Bearer ${user2AccessToken}`)
+      expect(acceptSwapResponse.statusCode).toBe(404)
+      expect(acceptSwapResponse.body.message).toBe('Swap not found')
+    })
+    test('should return 401 status code for unauthorized user', async () => {
+      const createSwapResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk1.id,
+          receivedItemId: disk2.id
+        })
+
+      const acceptSwapResponse = await request(app)
+        .put(`/swaps/${createSwapResponse.body.swap.id}/cancel`)
+        .set('Authorization', `Bearer ${user2AccessToken}`)
+
+      expect(acceptSwapResponse.statusCode).toBe(401)
+      expect(acceptSwapResponse.body.message).toBe('Unauthorized to cancel the swap')
+
+    })
+
+
+
+
+  })
+
 
 
 
