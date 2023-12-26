@@ -67,7 +67,7 @@ export const validateSwapId = (action: 'bothUsers' | 'receiverOnly') => async (r
             }
         } else if (action === 'receiverOnly') {
             if (swap.receiverId !== userId) {
-                return res.status(401).send({ message: 'Unauthorized to accept the swap' })
+                return res.status(401).send({ message: 'Unauthorized to accept/reject the swap' })
             }
         }
 
