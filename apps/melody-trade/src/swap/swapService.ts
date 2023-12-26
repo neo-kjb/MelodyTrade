@@ -63,5 +63,12 @@ export class SwapService {
         });
     }
 
+    static async updateSwapStatus(swapId: number, status: string) {
+        return await swapDB.update({
+            where: { id: swapId },
+            data: { status },
+        });
+    };
+
 }
 
