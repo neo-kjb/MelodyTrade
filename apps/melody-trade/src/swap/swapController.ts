@@ -44,3 +44,14 @@ export const acceptSwap = async (req: Request, res: Response) => {
     }
 
 }
+
+export const rejectSwap = async (req: Request, res: Response) => {
+    try {
+        const swapId = parseInt(req.params.swapId, 10);
+        const updatedSwap = await SwapService.updateSwapStatus(swapId, 'rejected');
+        res.status(200).send({ message: 'Swap request rejected successfully', updatedSwap });
+    } catch (error) {
+        console.log('Error rejecting swap request:', error);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+};
