@@ -45,3 +45,35 @@ export const validateSwapRequest = async (req: Request, res: Response, next: Nex
         return res.status(500).send({ message: 'Internal Server Error' });
     }
 }
+
+
+export const validateSwapId = (action: 'access' | 'accept') => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const swapId = parseInt(req.params.swapId, 10)
+        if (isNaN(swapId) || swapId <= 0) {
+            return res.status(400).send({ message: 'Invalid swap ID' })
+        }
+
+        const swap = await SwapService.getSwapDetails(swapId)
+        if (!swap) {
+            return res.status(404).send({ message: 'Swap not found' })
+        }
+
+        const userId = req.reqUserId
+
+        if (action === 'access') {
+            if (swap.senderId !== userId && swap.receiverId !== userId) {
+                return res.status(401).send({ message: 'Unauthorized access to swap details' })
+            }
+        } else if (action === 'accept') {
+            if (swap.receiverId !== userId) {
+                return res.status(401).send({ message: 'Unauthorized to accept the swap' })
+            }
+        }
+
+        next()
+    } catch (error) {
+        console.log('Error validating swap ID:', error)
+        return res.status(500).send({ message: 'Internal Server Error' })
+    }
+};
