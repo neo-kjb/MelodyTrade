@@ -47,7 +47,7 @@ export const validateSwapRequest = async (req: Request, res: Response, next: Nex
 }
 
 
-export const validateSwapId = (action: 'bothUsers' | 'receiverOnly') => async (req: Request, res: Response, next: NextFunction) => {
+export const validateSwapId = (action: 'access' | 'accept') => async (req: Request, res: Response, next: NextFunction) => {
     try {
         const swapId = parseInt(req.params.swapId, 10)
         if (isNaN(swapId) || swapId <= 0) {
@@ -61,11 +61,11 @@ export const validateSwapId = (action: 'bothUsers' | 'receiverOnly') => async (r
 
         const userId = req.reqUserId
 
-        if (action === 'bothUsers') {
+        if (action === 'access') {
             if (swap.senderId !== userId && swap.receiverId !== userId) {
                 return res.status(401).send({ message: 'Unauthorized access to swap details' })
             }
-        } else if (action === 'receiverOnly') {
+        } else if (action === 'accept') {
             if (swap.receiverId !== userId) {
                 return res.status(401).send({ message: 'Unauthorized to accept the swap' })
             }
