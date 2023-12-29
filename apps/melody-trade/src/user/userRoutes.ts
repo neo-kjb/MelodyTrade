@@ -1,13 +1,15 @@
 import express from "express";
-import { getUserDetails, login, signup } from "./userController";
-import { loginCheckCredentials, validateLoginMiddleware, validateSignupMiddleware } from "./middleware";
+import { getUserDetails, login, signup, getCurrUser } from "./userController";
+import { isAuth, loginCheckCredentials, validateLoginMiddleware, validateSignupMiddleware } from "./middleware";
 
 const router = express.Router()
 
-router.post('/login',validateLoginMiddleware,loginCheckCredentials,login);
-  
-router.post('/signup',validateSignupMiddleware,signup)
+router.post('/login', validateLoginMiddleware, loginCheckCredentials, login);
 
-router.get('/:nameIn',getUserDetails)
+router.post('/signup', validateSignupMiddleware, signup)
+
+router.get('/:nameIn', getUserDetails)
+
+router.get("/auth", isAuth, getCurrUser)
 
 export default router
