@@ -8,6 +8,9 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/apps/frontend',
 
   server: {
+    fs: {
+      allow: ['C:/Users/ZooOooZ/Desktop/Projects/New folder (2)/melody-trade'],
+    },
     port: 4200,
     host: 'localhost',
   },
