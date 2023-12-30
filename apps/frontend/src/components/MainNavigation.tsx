@@ -1,13 +1,29 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { getAuthToken } from '../utils/getAuthToken';
 
 export default function MainNavigation() {
+  const navigate = useNavigate();
+  const token = getAuthToken();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const logoutHandler = () => {
+    const confirm = window.confirm('Are You Sure ?');
+    if (confirm) {
+      localStorage.removeItem('token');
+      navigate('/');
+      enqueueSnackbar('Logout Successfully', { variant: 'success' });
+      return;
+    } else {
+      return;
+    }
+  };
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 relative">
@@ -112,47 +128,54 @@ export default function MainNavigation() {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/users/login"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                Log In
-              </NavLink>
-            </li>
+            {!token && (
+              <li>
+                <NavLink
+                  to="/users/login"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  end
+                >
+                  Log In
+                </NavLink>
+              </li>
+            )}
 
-            <li>
-              <NavLink
-                to="/users/signup"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                Sign Up
-              </NavLink>
-            </li>
+            {!token && (
+              <li>
+                <NavLink
+                  to="/users/signup"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  end
+                >
+                  Sign Up
+                </NavLink>
+              </li>
+            )}
 
-            <li>
-              <NavLink
-                to="/users/logout"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                Log out
-              </NavLink>
-            </li>
+            {token && (
+              <li>
+                <NavLink
+                  onClick={logoutHandler}
+                  to="/users/logout"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  end
+                >
+                  Log out
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>
