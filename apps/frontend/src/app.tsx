@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './components/Root';
-import HomePage from './pages/HomePage';
+import WelcomePage from './pages/WelcomePage';
 import LoginPage from './pages/users/LoginPage';
 import SignupPage from './pages/users/SignupPage';
 import UserDetailsPage from './pages/users/UserDetailsPage';
@@ -16,7 +16,7 @@ export default function App() {
       path: '/',
       element: <Root />,
       children: [
-        { path: '/', element: <HomePage /> },
+        { path: '/', element: <WelcomePage /> },
         { path: '/users/login', element: <LoginPage /> },
         { path: '/users/signup', element: <SignupPage /> },
         { path: '/users/:userId', element: <UserDetailsPage /> },
