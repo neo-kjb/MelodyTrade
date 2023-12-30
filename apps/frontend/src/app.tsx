@@ -1,7 +1,32 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Root from './components/Root';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/users/LoginPage';
+import SignupPage from './pages/users/SignupPage';
+import UserDetailsPage from './pages/users/UserDetailsPage';
+import DiskDetailsPage from './pages/disks/DiskDetailsPage';
+import EditDiskPage from './pages/disks/EditDiskPage';
+import AddDiskPage from './pages/disks/AddDiskPage';
+import SwapRequestPage from './pages/swaps/SwapRequestPage';
+import DisksIndexPage from './pages/disks/DisksIndexPage';
+
 export default function App() {
-  return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Root />,
+      children: [
+        { path: '/', element: <HomePage /> },
+        { path: '/users/login', element: <LoginPage /> },
+        { path: '/users/signup', element: <SignupPage /> },
+        { path: '/users/:userId', element: <UserDetailsPage /> },
+        { path: '/disks', element: <DisksIndexPage /> },
+        { path: '/disks/:diskId', element: <DiskDetailsPage /> },
+        { path: '/disks/:diskId/edit', element: <EditDiskPage /> },
+        { path: '/disks/new', element: <AddDiskPage /> },
+        { path: '/swaps', element: <SwapRequestPage /> },
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }

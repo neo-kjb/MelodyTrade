@@ -68,6 +68,21 @@ export default function MainNavigation() {
                 Home
               </NavLink>
             </li>
+
+            <li>
+              <NavLink
+                to="/disks/new"
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-blue-700 font-bold'
+                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                }
+                end
+              >
+                Add Disk
+              </NavLink>
+            </li>
+
             <li>
               <NavLink
                 to="/swaps"
@@ -83,19 +98,6 @@ export default function MainNavigation() {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/products/new"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                Add Disk
-              </NavLink>
-            </li>
             <li>
               <NavLink
                 to="/users/:userId"
@@ -123,6 +125,7 @@ export default function MainNavigation() {
                 Log In
               </NavLink>
             </li>
+
             <li>
               <NavLink
                 to="/users/signup"
@@ -136,6 +139,7 @@ export default function MainNavigation() {
                 Sign Up
               </NavLink>
             </li>
+
             <li>
               <NavLink
                 to="/users/logout"
