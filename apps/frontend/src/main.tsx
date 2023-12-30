@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom/client';
 import App from './app';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { SnackbarProvider } from 'notistack';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
     </Provider>
   </StrictMode>
 );

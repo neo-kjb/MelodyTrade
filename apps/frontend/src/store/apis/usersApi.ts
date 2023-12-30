@@ -1,10 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getAuthToken } from "../../utils/getAuthToken";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { getAuthToken } from '../../utils/getAuthToken';
 
 const usersApi = createApi({
-  reducerPath: "users",
+  reducerPath: 'users',
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3333/users",
+    baseUrl: 'http://localhost:3333/auth',
   }),
   endpoints(builder) {
     return {
@@ -12,8 +12,8 @@ const usersApi = createApi({
         query: (user) => {
           const { username, email, password } = user;
           return {
-            url: "/signup",
-            method: "POST",
+            url: '/signup',
+            method: 'POST',
             body: {
               username,
               email,
@@ -26,8 +26,8 @@ const usersApi = createApi({
         query: (user) => {
           const { email, password } = user;
           return {
-            url: "/login",
-            method: "POST",
+            url: '/login',
+            method: 'POST',
             body: {
               email,
               password,
@@ -38,10 +38,10 @@ const usersApi = createApi({
       getCurUser: builder.query({
         query: () => {
           return {
-            url: "/auth",
-            method: "GET",
+            url: '/auth',
+            method: 'GET',
             headers: {
-              Authorization: "Bearer " + getAuthToken(),
+              Authorization: 'Bearer ' + getAuthToken(),
             },
           };
         },
@@ -50,7 +50,7 @@ const usersApi = createApi({
         query: (username) => {
           return {
             url: `/${username}`,
-            method: "GET",
+            method: 'GET',
           };
         },
       }),
