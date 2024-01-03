@@ -1,6 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Modal from './Modal';
 
 export default function DiskDetails({ disk }) {
+  const [isSwapping, setIsSwapping] = useState(false);
+
+  const openModal = () => {
+    setIsSwapping(true);
+  };
   return (
     <div className="flex flex-col lg:flex-row h-screen">
       <div className="lg:w-1/2 flex items-center justify-center bg-white text-black">
@@ -8,7 +15,6 @@ export default function DiskDetails({ disk }) {
           <img src={disk.imageURL} alt="Album Art" />
         </div>
       </div>
-      {/* <!-- Right Pane --> */}
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
         <div className="max-w-md w-full p-6">
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">
@@ -16,10 +22,9 @@ export default function DiskDetails({ disk }) {
           </h1>
 
           <form className="space-y-4">
-            {/* <!-- Your form elements go here --> */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Artist Name:
+                Disk Title:
               </label>
               <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300">
                 {disk.name}
@@ -55,12 +60,14 @@ export default function DiskDetails({ disk }) {
 
             <div>
               <button
-                type="submit"
+                type="button"
+                onClick={openModal}
                 className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
                 Swap Now
               </button>
             </div>
+            {isSwapping && <Modal onClose={() => setIsSwapping(false)} />}
           </form>
         </div>
       </div>
