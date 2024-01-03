@@ -425,4 +425,62 @@ describe('Disk Routes', () => {
       expect(deletedDisk).toBeNull();
     });
   });
+
+  describe('GET /disks/user/:username Getting Disks by User Route', () => {
+    afterEach(async () => {
+      await DiskService.deleteAllDisks();
+      await UserService.deleteAllUsers();
+    });
+
+    test('should return 404 status code for user not found', async () => {
+      const response = await request(app).get('/disks/user/nonexistentuser');
+      expect(response.statusCode).toBe(404);
+      expect(response.body.message).toBe('User not found');
+    });
+
+    test('should return 200 status code with disk data for a valid username', async () => {
+      const userData = {
+        username: 'testuser',
+        email: 'testuser@email.com',
+        password: 'password',
+      };
+
+      const user = await UserService.createUser(userData);
+
+      const diskData = {
+        name: 'diskName',
+        description: 'description',
+        location: 'Somewhere',
+        imageURL: 'https://someUrl.com',
+        userId: user.id,
+      };
+
+      await DiskService.createDisk(diskData);
+
+      const response = await request(app).get(
+        `/disks/user/${userData.username}`
+      );
+      expect(response.statusCode).toBe(200);
+      expect(response.body.count).toBe(1);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].id).toBeDefined();
+      expect(response.body.data[0].userId).toBe(user.id);
+    });
+
+    test('should return 200 status code with message for a user with no disks', async () => {
+      const userData = {
+        username: 'testuser',
+        email: 'testuser@email.com',
+        password: 'password',
+      };
+
+      await UserService.createUser(userData);
+
+      const response = await request(app).get(
+        `/disks/user/${userData.username}`
+      );
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toBe('No disks found');
+    });
+  });
 });
