@@ -1,15 +1,20 @@
-import express from "express";
-import { getUserDetails, login, signup, getCurrUser } from "./userController";
-import { isAuth, loginCheckCredentials, validateLoginMiddleware, validateSignupMiddleware } from "./middleware";
+import express from 'express';
+import { getUserDetails, login, signup, getCurrUser } from './userController';
+import {
+  isAuth,
+  loginCheckCredentials,
+  validateLoginMiddleware,
+  validateSignupMiddleware,
+} from './middleware';
 
-const router = express.Router()
+const router = express.Router();
 
 router.post('/login', validateLoginMiddleware, loginCheckCredentials, login);
 
-router.post('/signup', validateSignupMiddleware, signup)
+router.post('/signup', validateSignupMiddleware, signup);
 
-router.get('/:nameIn', getUserDetails)
+router.get('/auth', isAuth, getCurrUser);
 
-router.get("/auth", isAuth, getCurrUser)
+router.get('/:nameIn', getUserDetails);
 
-export default router
+export default router;
