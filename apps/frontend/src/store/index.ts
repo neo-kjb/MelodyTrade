@@ -34,6 +34,7 @@ export {
   useEditDiskMutation,
   useGetAllDisksQuery,
   useGetDiskDetailsQuery,
+  useGetDisksByUsernameQuery,
 } from './apis/disksApi';
 
 export {

@@ -42,6 +42,14 @@ const disksApi = createApi({
           };
         },
       }),
+      getDisksByUsername: builder.query({
+        query: (username) => {
+          return {
+            url: `/user/${username}`,
+            method: 'GET',
+          };
+        },
+      }),
       editDisk: builder.mutation({
         query: (disk) => {
           const { name, description, location, imageURL } = disk;
@@ -77,4 +85,5 @@ export const {
   useDeleteDiskMutation,
   useEditDiskMutation,
   useGetDiskDetailsQuery,
+  useGetDisksByUsernameQuery,
 } = disksApi;
