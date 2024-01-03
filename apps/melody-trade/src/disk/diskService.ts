@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const diskDB = prisma.item;
 
@@ -39,7 +39,7 @@ export class DiskService {
   static async updateDisk(id: number, data: Partial<Disk>) {
     return await diskDB.update({
       where: {
-        id
+        id,
       },
       data,
     });
@@ -48,11 +48,23 @@ export class DiskService {
   static async deleteDisk(id: number) {
     return await diskDB.delete({
       where: {
-        id
+        id,
       },
     });
   }
   static async deleteAllDisks() {
     return await diskDB.deleteMany();
+  }
+  static async getDisksByUsername(username: string) {
+    return await diskDB.findMany({
+      where: {
+        user: {
+          username,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
   }
 }
