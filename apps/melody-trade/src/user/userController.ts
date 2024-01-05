@@ -26,7 +26,7 @@ export const signup = async (req: Request, res: Response) => {
     const hashedPW = await hashPassword(password);
     const data = { username, email, password: hashedPW };
     const user = await UserService.createUser(data);
-    const accessToken = jwt.sign({ d: user.id }, process.env.TOKEN_KEY, {
+    const accessToken = jwt.sign({ id: user.id }, process.env.TOKEN_KEY, {
       expiresIn: '1h',
     });
     return res
