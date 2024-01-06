@@ -85,48 +85,54 @@ export default function MainNavigation() {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/disks/new"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                Add Disk
-              </NavLink>
-            </li>
+            {token && (
+              <li>
+                <NavLink
+                  to="/disks/new"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  end
+                >
+                  Add Disk
+                </NavLink>
+              </li>
+            )}
 
-            <li>
-              <NavLink
-                to="/swaps"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                aria-current="page"
-                end
-              >
-                Swap Requests
-              </NavLink>
-            </li>
+            {token && (
+              <li>
+                <NavLink
+                  to="/swaps"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  aria-current="page"
+                  end
+                >
+                  Swap Requests
+                </NavLink>
+              </li>
+            )}
 
-            <li>
-              <NavLink
-                to="/users/:userId"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-blue-700 font-bold'
-                    : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                }
-                end
-              >
-                My Account
-              </NavLink>
-            </li>
+            {token && (
+              <li>
+                <NavLink
+                  to="/users/:userId"
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-blue-700 font-bold'
+                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
+                  }
+                  end
+                >
+                  My Account
+                </NavLink>
+              </li>
+            )}
 
             {!token && (
               <li>
@@ -137,7 +143,6 @@ export default function MainNavigation() {
                       ? 'text-blue-700 font-bold'
                       : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
                   }
-                  end
                 >
                   Log In
                 </NavLink>
@@ -153,7 +158,6 @@ export default function MainNavigation() {
                       ? 'text-blue-700 font-bold'
                       : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
                   }
-                  end
                 >
                   Sign Up
                 </NavLink>
@@ -164,13 +168,8 @@ export default function MainNavigation() {
               <li>
                 <NavLink
                   onClick={logoutHandler}
-                  to="/users/logout"
-                  className={({ isActive }) =>
-                    isActive
-                      ? 'text-blue-700 font-bold'
-                      : 'block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent'
-                  }
-                  end
+                  to={'/'}
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Log out
                 </NavLink>
