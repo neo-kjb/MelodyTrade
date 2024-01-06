@@ -30,10 +30,7 @@ export default function DisksIndexPage() {
         <Link to={'/users/login'} className="text-blue-700">
           Log in
         </Link>{' '}
-        and start adding disks{' '}
-        <Link to={'/disks/new'} className="text-blue-700">
-          now
-        </Link>
+        and start adding disks.
       </div>
     );
   } else {

@@ -1,9 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from './Modal';
+import { useCreateSwapMutation, useGetCurUserQuery } from '../store';
+import { useSnackbar } from 'notistack';
 
 export default function DiskDetails({ disk }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [isSwapping, setIsSwapping] = useState(false);
+  const [createSwap, results] = useCreateSwapMutation();
+
+  const { data } = useGetCurUserQuery();
+
+  const handleSelectDiskToSwap = (senderDisk) => {
+    const swapData = {
+      sentItemId: senderDisk.id,
+      receivedItemId: disk.id,
+    };
+    createSwap(swapData);
+  };
+  useEffect(() => {
+    if (results.isSuccess) {
+      enqueueSnackbar('Swap request sent successfully', {
+        variant: 'success',
+      });
+    }
+  }, [enqueueSnackbar, results.isSuccess]);
+  useEffect(() => {
+    if (results.error?.data?.message) {
+      enqueueSnackbar(results.error.data.message, {
+        variant: 'error',
+      });
+    }
+  }, [enqueueSnackbar, results.error?.data?.message]);
 
   const openModal = () => {
     setIsSwapping(true);
@@ -58,16 +86,23 @@ export default function DiskDetails({ disk }) {
               </Link>
             </div>
 
-            <div>
-              <button
-                type="button"
-                onClick={openModal}
-                className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
-              >
-                Swap Now
-              </button>
-            </div>
-            {isSwapping && <Modal onClose={() => setIsSwapping(false)} />}
+            {data?.currUserId !== disk.userId && (
+              <div>
+                <button
+                  type="button"
+                  onClick={openModal}
+                  className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                >
+                  Swap Now
+                </button>
+              </div>
+            )}
+            {isSwapping && (
+              <Modal
+                onSelect={handleSelectDiskToSwap}
+                onClose={() => setIsSwapping(false)}
+              />
+            )}
           </form>
         </div>
       </div>

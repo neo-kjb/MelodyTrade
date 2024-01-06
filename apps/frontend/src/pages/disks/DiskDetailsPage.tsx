@@ -11,7 +11,6 @@ export default function DiskDetailsPage() {
 
   const { diskId } = useParams();
   const { data, isFetching, isError } = useGetDiskDetailsQuery(diskId);
-  console.log(data);
 
   useEffect(() => {
     if (!isFetching) {
