@@ -5,15 +5,14 @@ import { Link } from 'react-router-dom';
 
 export default function Modal({ onClose, onSelect }) {
   const [showModal, setShowModal] = useState(false);
-  const [sentDisk, setSentDisk] = useState({});
-  const [isSelected, setIsSelected] = useState(false);
+  const [sentDisk, setSentDisk] = useState(null);
 
   const { data } = useGetCurUserQuery();
 
   const handleSetSelectedDisk = (disk) => {
-    setIsSelected(true);
     setSentDisk(disk);
   };
+
   const handleSelectDiskToSwap = () => {
     onSelect(sentDisk);
     onClose();
@@ -37,14 +36,19 @@ export default function Modal({ onClose, onSelect }) {
       <p>
         You don't have any disk to swap,{' '}
         <Link to={'/disks/new'} className="text-blue-700">
-          add disk
+          add a disk
         </Link>{' '}
         and start swapping.
       </p>
     );
   } else {
     content = disks.data?.map((disk) => (
-      <DiskImage key={disk.id} disk={disk} onSelect={handleSetSelectedDisk} />
+      <DiskImage
+        key={disk.id}
+        disk={disk}
+        onSelect={handleSetSelectedDisk}
+        isSelected={disk === sentDisk}
+      />
     ));
   }
 
@@ -87,7 +91,7 @@ export default function Modal({ onClose, onSelect }) {
                   >
                     Close
                   </button>
-                  {isSelected && (
+                  {sentDisk && (
                     <button
                       className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                       type="button"
@@ -101,7 +105,7 @@ export default function Modal({ onClose, onSelect }) {
             </div>
           </div>
           <div className="relative h-32 w-32 ...">
-            <div className="opacity-25 fixed inset-0 z-40 bg-black	"></div>
+            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
           </div>
         </>
       ) : null}

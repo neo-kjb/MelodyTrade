@@ -1,9 +1,7 @@
-import { useState } from 'react';
+import React from 'react';
 
-export default function DiskImage({ disk, onSelect }) {
-  const [isSelected, setIsSelected] = useState(false);
+export default function DiskImage({ disk, isSelected, onSelect }) {
   const handleClick = () => {
-    setIsSelected(!isSelected);
     onSelect(disk);
   };
 
