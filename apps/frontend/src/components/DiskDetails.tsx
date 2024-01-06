@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import Modal from './Modal';
 import { useCreateSwapMutation, useGetCurUserQuery } from '../store';
 import { useSnackbar } from 'notistack';
+import { getAuthToken } from '../utils/getAuthToken';
 
 export default function DiskDetails({ disk }) {
+  const token = getAuthToken();
   const { enqueueSnackbar } = useSnackbar();
   const [isSwapping, setIsSwapping] = useState(false);
   const [createSwap, results] = useCreateSwapMutation();
+  const [isDisplaySwapButton, setIsDisplaySwapButton] = useState(true);
 
   const { data } = useGetCurUserQuery();
 
@@ -36,16 +39,23 @@ export default function DiskDetails({ disk }) {
   const openModal = () => {
     setIsSwapping(true);
   };
+
+  useEffect(() => {
+    if (data?.currUserId === disk.userId || !token) {
+      setIsDisplaySwapButton(false);
+    }
+  }, [data?.currUserId, disk.userId, token]);
+
   return (
-    <div className="flex flex-col lg:flex-row h-screen">
+    <div className="flex flex-col lg:flex-row mt-10">
       <div className="lg:w-1/2 flex items-center justify-center bg-white text-black">
         <div className="max-w-md text-center">
           <img src={disk.imageURL} alt="Album Art" />
         </div>
       </div>
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
-        <div className="max-w-md w-full p-6">
-          <h1 className="text-3xl font-semibold mb-6 text-black text-center">
+        <div className="max-w-md w-full p-6 m-auto">
+          <h1 className="text-3xl font-semibold mb-6 text-black text-center break-words">
             {disk.name}
           </h1>
 
@@ -54,7 +64,7 @@ export default function DiskDetails({ disk }) {
               <label className="block text-sm font-medium text-gray-700">
                 Disk Title:
               </label>
-              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300">
+              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 break-words">
                 {disk.name}
               </p>
             </div>
@@ -62,7 +72,7 @@ export default function DiskDetails({ disk }) {
               <label className="block text-sm font-medium text-gray-700">
                 Location to Pick:
               </label>
-              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300">
+              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 break-words">
                 {disk.location}
               </p>
             </div>
@@ -70,10 +80,11 @@ export default function DiskDetails({ disk }) {
               <label className="block text-sm font-medium text-gray-700">
                 Description:
               </label>
-              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300">
+              <p className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 break-words">
                 {disk.description}
               </p>
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Disk Owner:
@@ -86,7 +97,7 @@ export default function DiskDetails({ disk }) {
               </Link>
             </div>
 
-            {data?.currUserId !== disk.userId && (
+            {isDisplaySwapButton && (
               <div>
                 <button
                   type="button"

@@ -21,7 +21,7 @@ export default function DiskImage({ disk, onSelect }) {
         src={`${disk.imageURL}`}
         alt="Album Art"
       />
-      <p>{disk.name}</p>
+      <p className="text-clip text-wrap">{disk.name}</p>
     </div>
   );
 }

@@ -8,11 +8,11 @@ export default function DiskItem({ disk }) {
       <img
         src={disk.imageURL}
         alt={disk.name}
-        className="w-1/3 object-cover rounded-lg mr-4"
+        className="w-1/4 object-cover rounded-lg mr-4"
       />
       <div className="flex-1">
         <h2 className="text-lg font-medium text-gray-800 mb-2">{disk.name}</h2>
-        <p className="text-gray-600">{disk.description}</p>
+        <p className="text-gray-600 break-words">{disk.description}</p>
       </div>
       <button
         onClick={() => navigate(`/disks/${disk.id}`)}
