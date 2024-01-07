@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import { useCreateSwapMutation, useGetCurUserQuery } from '../store';
 import { useSnackbar } from 'notistack';
 import { getAuthToken } from '../utils/getAuthToken';
 
 export default function DiskDetails({ disk }) {
+  const navigate = useNavigate();
   const token = getAuthToken();
   const { enqueueSnackbar } = useSnackbar();
   const [isSwapping, setIsSwapping] = useState(false);
@@ -26,8 +27,9 @@ export default function DiskDetails({ disk }) {
       enqueueSnackbar('Swap request sent successfully', {
         variant: 'success',
       });
+      navigate('/swaps');
     }
-  }, [enqueueSnackbar, results.isSuccess]);
+  }, [enqueueSnackbar, navigate, results.isSuccess]);
   useEffect(() => {
     if (results.error?.data?.message) {
       enqueueSnackbar(results.error.data.message, {

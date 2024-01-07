@@ -14,14 +14,18 @@ export default function DisksIndexPage() {
       enqueueSnackbar('Loading Disks...', { variant: 'info' });
     }
   }, [enqueueSnackbar, isLoading]);
+  useEffect(() => {
+    if (isError) {
+      enqueueSnackbar('Error Loading Disks, Please Refresh the Page...', {
+        variant: 'error',
+      });
+    }
+  }, [enqueueSnackbar, isError]);
 
   let content;
   if (isLoading) {
     content = <Skeleton className={'h-48 w-full'} times={3} />;
   } else if (isError) {
-    enqueueSnackbar('Error Loading Disks, Please Refresh the Page...', {
-      variant: 'error',
-    });
     content = <div>Error Loading Disks!</div>;
   } else if (data.message) {
     return (
@@ -38,7 +42,7 @@ export default function DisksIndexPage() {
   }
   return (
     <>
-      <h1 className="text-xl m-6">All Disks {`(${data?.count})`}</h1>
+      <h1 className="text-xl m-6">All Disks {`(${data?.count || 0})`}</h1>
       <div>{content}</div>
     </>
   );
