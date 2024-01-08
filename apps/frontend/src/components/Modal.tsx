@@ -56,14 +56,14 @@ export default function Modal({ onClose, onSelect }) {
     <>
       <div className="flex">
         <button
-          className="w-6/12 bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          className="mx-2 block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue"
           type="button"
           onClick={() => setShowModal(true)}
         >
           Select Disk to Swap
         </button>
         <button
-          className="w-6/12 bg-red-500 text-white active:bg-red-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          className=" block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-blue"
           type="button"
           onClick={onClose}
         >

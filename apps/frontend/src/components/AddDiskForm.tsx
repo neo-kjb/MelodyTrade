@@ -88,7 +88,7 @@ export default function LoginForm() {
 
               <div className="mt-4">
                 <label htmlFor="name" className="block text-sm">
-                  Artist Name
+                  Disk Title
                 </label>
                 <input
                   value={name}
@@ -99,7 +99,7 @@ export default function LoginForm() {
                   name="name"
                   type="text"
                   className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="Artist Name"
+                  placeholder="Disk Title"
                   required
                 />
                 {errors.name && (
