@@ -39,9 +39,9 @@ model Swap {
   sentItemId      Int
   receivedItemId  Int
   status          String
-  sentItem        Item      @relation("sentItem", fields: [sentItemId], references: [id])
-  receivedItem    Item      @relation("receivedItem", fields: [receivedItemId], references: [id])
-  sender          User      @relation("sender", fields: [senderId], references: [id])
-  receiver        User      @relation("receiver", fields: [receiverId], references: [id])
+  sentItem        Item      @relation("sentItem", fields: [sentItemId], references: [id], onDelete: Cascade)
+  receivedItem    Item      @relation("receivedItem", fields: [receivedItemId], references: [id], onDelete: Cascade)
+  sender          User      @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver        User      @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
   createdAt       DateTime  @default(now())
 }
