@@ -1,66 +1,65 @@
-import { useState, useEffect, FormEvent } from 'react';
-import { useCreateDiskMutation } from '../store';
-import { useNavigate } from 'react-router';
-import { useSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
+import { useEditDiskMutation } from '../store';
+import { enqueueSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
-export default function LoginForm() {
+export default function EditDiskForm({ disk }) {
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [imageURL, setImageURL] = useState('');
+  const [name, setName] = useState(disk.name);
+  const [description, setDescription] = useState(disk.description);
+  const [location, setLocation] = useState(disk.location);
+  const [imageURL, setImageURL] = useState(disk.imageURL);
   const [errors, setErrors] = useState({});
-  const [createDisk, results] = useCreateDiskMutation();
+  const [editDisk, results] = useEditDiskMutation();
 
-  useEffect(() => {
-    if (results.isLoading) {
-      enqueueSnackbar('Creating Disk, please wait...', { variant: 'info' });
-    }
-  }, [results.isLoading, enqueueSnackbar]);
-
-  const handleAddDisk = async (e: FormEvent) => {
+  const handleEditDisk = (e: Event) => {
     e.preventDefault();
-
-    const diskData = {
+    const newDiskData = {
       name,
       description,
       location,
       imageURL,
+      id: 'disk.id',
     };
+    editDisk(newDiskData);
+  };
+  console.log(results);
 
-    try {
-      const data = await createDisk(diskData).unwrap();
-      console.log(data);
-      enqueueSnackbar('Adding disk successfully', { variant: 'success' });
-      navigate(`/disks/${data.disk.id}`);
-    } catch (error) {
-      console.log(error);
-
-      if (error.status === 'FETCH_ERROR' || error.status === 500) {
-        enqueueSnackbar('Connection error, please refresh the page', {
-          variant: 'error',
-        });
-      }
-      if (error.status === 401) {
-        enqueueSnackbar('You Must be Logged in to Add a Disk', {
-          variant: 'error',
-        });
-      }
-      if (error.status === 400 && error.data.errors) {
-        const errorArray = error.data.errors;
+  useEffect(() => {
+    if (results.isError) {
+      if (results.error?.data?.message === 'Invalid input') {
+        const errorArray = results.error?.data?.errors;
         const errorObject = {};
-        enqueueSnackbar('Adding Disk Failed', {
+        enqueueSnackbar('Editing Disk Failed', {
           variant: 'error',
         });
         errorArray.forEach((errorItem) => {
           errorObject[errorItem.path] = errorItem.message;
         });
-
         setErrors(errorObject);
       }
+      if (
+        results.error?.status === 400 ||
+        results.error?.status === 404 ||
+        results.error?.status === 401
+      ) {
+        enqueueSnackbar(results.error?.data?.message, { variant: 'error' });
+      }
     }
-  };
+
+    if (results.isSuccess) {
+      enqueueSnackbar('Disk Edited Successfully', { variant: 'success' });
+      navigate(`/disks/${disk.id}`);
+    }
+  }, [
+    disk.id,
+    navigate,
+    results.error?.data?.errors,
+    results.error?.data?.message,
+    results.error?.status,
+    results.isError,
+    results.isSuccess,
+  ]);
 
   return (
     <div className="flex items-center min-h-screen bg-gray-50">
@@ -69,12 +68,12 @@ export default function LoginForm() {
           <div className="h-32 md:h-auto md:w-1/2">
             <img
               className="object-cover w-full h-full"
-              src="https://wallpaper-house.com/data/out/10/wallpaper2you_446350.jpg"
+              src={disk.imageURL}
               alt="img"
             />
           </div>
           <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-            <form onSubmit={handleAddDisk} className="w-full">
+            <form onSubmit={handleEditDisk} className="w-full">
               <div className="flex justify-center">
                 <img
                   src="https://www.svgrepo.com/show/507644/disk.svg"
@@ -83,7 +82,7 @@ export default function LoginForm() {
                 />
               </div>
               <h1 className="mb-4 text-2xl font-bold text-center text-gray-700">
-                Add disk
+                Edit disk
               </h1>
 
               <div className="mt-4">
@@ -173,10 +172,10 @@ export default function LoginForm() {
                 type="submit"
                 className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
               >
-                Add Disk
+                Edit Disk
               </button>
               <button
-                onClick={() => navigate(`/disks`)}
+                onClick={() => navigate(`/disks/${disk.id}`)}
                 type="button"
                 className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
               >
