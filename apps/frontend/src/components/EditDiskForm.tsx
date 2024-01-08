@@ -23,7 +23,6 @@ export default function EditDiskForm({ disk }) {
     };
     editDisk(newDiskData);
   };
-  console.log(results);
 
   useEffect(() => {
     if (results.isError) {

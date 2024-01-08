@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Modal from './Modal';
-import { useCreateSwapMutation, useGetCurUserQuery } from '../store';
+import {
+  useCreateSwapMutation,
+  useGetCurUserQuery,
+  useDeleteDiskMutation,
+} from '../store';
 import { useSnackbar } from 'notistack';
 import { getAuthToken } from '../utils/getAuthToken';
 
@@ -9,14 +13,22 @@ export default function DiskDetails({ disk }) {
   const navigate = useNavigate();
   const token = getAuthToken();
   const { enqueueSnackbar } = useSnackbar();
-  const [isSwapping, setIsSwapping] = useState(false);
 
-  const [createSwap, results] = useCreateSwapMutation();
+  const [isSwapping, setIsSwapping] = useState(false);
   const [isDisplaySwapButton, setIsDisplaySwapButton] = useState(true);
 
-  const handleDelete = () => {};
-
+  const [createSwap, results] = useCreateSwapMutation();
+  const [deleteDisk, deleteDiskResults] = useDeleteDiskMutation();
   const { data } = useGetCurUserQuery();
+
+  const openModal = () => {
+    setIsSwapping(true);
+  };
+
+  const handleDeleteDisk = () => {
+    deleteDisk(disk.id);
+  };
+  console.log(deleteDiskResults);
 
   const handleSelectDiskToSwap = (senderDisk) => {
     const swapData = {
@@ -25,6 +37,7 @@ export default function DiskDetails({ disk }) {
     };
     createSwap(swapData);
   };
+
   useEffect(() => {
     if (results.isSuccess) {
       enqueueSnackbar('Swap request sent successfully', {
@@ -32,24 +45,43 @@ export default function DiskDetails({ disk }) {
       });
       navigate('/swaps');
     }
-  }, [enqueueSnackbar, navigate, results.isSuccess]);
-  useEffect(() => {
+
     if (results.error?.data?.message) {
       enqueueSnackbar(results.error.data.message, {
         variant: 'error',
       });
     }
-  }, [enqueueSnackbar, results.error?.data?.message]);
 
-  const openModal = () => {
-    setIsSwapping(true);
-  };
-
-  useEffect(() => {
     if (data?.currUserId === disk.userId || !token) {
       setIsDisplaySwapButton(false);
     }
-  }, [data?.currUserId, disk.userId, token]);
+
+    if (deleteDiskResults.isSuccess) {
+      enqueueSnackbar('Disk Deleted Successfully', { variant: 'success' });
+      navigate('/disks');
+    }
+    if (deleteDiskResults.isLoading) {
+      enqueueSnackbar('Deleting your disk...', { variant: 'info' });
+    }
+
+    if (deleteDiskResults.isError) {
+      enqueueSnackbar(deleteDiskResults.error?.data?.message, {
+        variant: 'error',
+      });
+    }
+  }, [
+    data?.currUserId,
+    deleteDiskResults.error?.data?.message,
+    deleteDiskResults.isError,
+    deleteDiskResults.isLoading,
+    deleteDiskResults.isSuccess,
+    disk.userId,
+    enqueueSnackbar,
+    navigate,
+    results.error?.data?.message,
+    results.isSuccess,
+    token,
+  ]);
 
   return (
     <div className="flex items-center min-h-screen bg-gray-50">
@@ -132,7 +164,7 @@ export default function DiskDetails({ disk }) {
                   </button>
                   <button
                     type="button"
-                    onClick={handleDelete}
+                    onClick={handleDeleteDisk}
                     className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400 focus:outline-none focus:bg-red-400"
                   >
                     Delete
