@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { getAuthToken } from '../utils/getAuthToken';
-import { useLogoutUserMutation } from '../store';
+import { useGetCurUserQuery, useLogoutUserMutation } from '../store';
 
 export default function MainNavigation() {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ export default function MainNavigation() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [logout] = useLogoutUserMutation();
+  const { data } = useGetCurUserQuery();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -124,7 +125,7 @@ export default function MainNavigation() {
             {token && (
               <li>
                 <NavLink
-                  to="/users/:userId"
+                  to={`/users/${data?.currUserId}`}
                   className={({ isActive }) =>
                     isActive
                       ? 'text-blue-700 font-bold'

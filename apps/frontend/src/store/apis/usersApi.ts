@@ -47,9 +47,9 @@ const usersApi = createApi({
         },
       }),
       getUserDetails: builder.query({
-        query: (username) => {
+        query: (userId) => {
           return {
-            url: `/${username}`,
+            url: `/${userId}`,
             method: 'GET',
           };
         },
