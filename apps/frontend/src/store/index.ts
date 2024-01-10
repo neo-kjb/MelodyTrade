@@ -26,6 +26,7 @@ export {
   useGetCurUserQuery,
   useGetUserDetailsQuery,
   useLoginUserMutation,
+  useLogoutUserMutation,
 } from './apis/usersApi';
 
 export {

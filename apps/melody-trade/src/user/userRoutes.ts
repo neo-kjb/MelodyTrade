@@ -1,5 +1,11 @@
 import express from 'express';
-import { getUserDetails, login, signup, getCurrUser } from './userController';
+import {
+  getUserDetails,
+  login,
+  signup,
+  getCurrUser,
+  logout,
+} from './userController';
 import {
   isAuth,
   loginCheckCredentials,
@@ -15,6 +21,8 @@ router.post('/signup', validateSignupMiddleware, signup);
 
 router.get('/auth', isAuth, getCurrUser);
 
-router.get('/:nameIn', getUserDetails);
+router.get('/:userId', getUserDetails);
+
+router.post('/logout', logout);
 
 export default router;

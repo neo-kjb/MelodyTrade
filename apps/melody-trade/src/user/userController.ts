@@ -40,8 +40,11 @@ export const signup = async (req: Request, res: Response) => {
 
 export const getUserDetails = async (req: Request, res: Response) => {
   try {
-    const { nameIn } = req.params;
-    const user = await UserService.findOneByUsername(nameIn);
+    const userId = parseInt(req.params.userId, 10);
+    if (isNaN(userId) || userId <= 0) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    const user = await UserService.findById(userId);
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
@@ -69,4 +72,8 @@ export const getCurrUser = async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).send({ message: error.message });
   }
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.send({ message: 'Logged out successfully' });
 };

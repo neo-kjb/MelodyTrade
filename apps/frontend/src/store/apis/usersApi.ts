@@ -54,6 +54,14 @@ const usersApi = createApi({
           };
         },
       }),
+      logoutUser: builder.mutation({
+        query: () => {
+          return {
+            url: '/logout',
+            method: 'POST',
+          };
+        },
+      }),
     };
   },
 });
@@ -64,4 +72,5 @@ export const {
   useGetCurUserQuery,
   useGetUserDetailsQuery,
   useLoginUserMutation,
+  useLogoutUserMutation,
 } = usersApi;

@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { getAuthToken } from '../utils/getAuthToken';
+import { useLogoutUserMutation } from '../store';
 
 export default function MainNavigation() {
   const navigate = useNavigate();
   const token = getAuthToken();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [logout] = useLogoutUserMutation();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -17,6 +19,7 @@ export default function MainNavigation() {
     const confirm = window.confirm('Are You Sure ?');
     if (confirm) {
       localStorage.removeItem('token');
+      logout();
       navigate('/');
       enqueueSnackbar('Logout Successfully', { variant: 'success' });
       return;
