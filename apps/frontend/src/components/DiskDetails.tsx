@@ -84,9 +84,10 @@ export default function DiskDetails({ disk }) {
   ]);
 
   return (
-    <div className="flex items-center min-h-screen bg-gray-50">
-      <div className="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
-        <div className="flex flex-col md:flex-row">
+    <div className="relative flex items-center min-h-screen bg-gray-50">
+      <div className="absolute inset-0 bg-[url(https://cdn.wallpapersafari.com/50/13/jF6QLc.jpg)] bg-cover bg-center"></div>
+      <div className="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl relative">
+        <div className=" flex flex-col md:flex-row ">
           <div className="h-32 md:h-auto md:w-1/2">
             <img
               className="object-cover w-full h-full"
@@ -94,7 +95,7 @@ export default function DiskDetails({ disk }) {
               alt="img"
             />
           </div>
-          <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
+          <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2 ">
             <form className="w-full">
               <div className="flex justify-center">
                 <img

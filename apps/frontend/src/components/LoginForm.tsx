@@ -55,7 +55,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center min-h-screen bg-gray-50">
+    <div className="flex items-center min-h-screen bg-gray-50 bg-[url(https://wallpaperaccess.com/full/1891379.png)] bg-cover bg-center">
       <div className="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
         <div className="flex flex-col md:flex-row">
           <div className="h-32 md:h-auto md:w-1/2">
@@ -86,7 +86,7 @@ export default function LoginForm() {
                 </svg>
               </div>
               <h1 className="mb-4 text-2xl font-bold text-center text-gray-700">
-                Log in
+                Login
               </h1>
               {errors && <p className="text-red-500 text-sm mt-1">{errors}</p>}
 
@@ -129,7 +129,7 @@ export default function LoginForm() {
                 type="submit"
                 className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
               >
-                Log in
+                Login
               </button>
               <div className="mt-4 text-center">
                 <p className="text-sm">

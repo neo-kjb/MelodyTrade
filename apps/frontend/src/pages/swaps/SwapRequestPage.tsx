@@ -11,12 +11,13 @@ export default function SwapRequestPage() {
 
   useEffect(() => {
     if (isLoading) {
-      enqueueSnackbar('Loading Swaps Requests...', { variant: 'info' });
+      enqueueSnackbar('Loading Swap Requests...', { variant: 'info' });
     }
   }, [enqueueSnackbar, isLoading]);
+
   useEffect(() => {
     if (isError) {
-      enqueueSnackbar('Error Loading Swaps, Please Refresh the Page...', {
+      enqueueSnackbar('Error Loading Swaps. Please Refresh the Page.', {
         variant: 'error',
       });
     }
@@ -24,22 +25,43 @@ export default function SwapRequestPage() {
 
   let content;
   if (isLoading) {
-    content = <Skeleton className={'h-48 w-full'} times={3} />;
+    content = <Skeleton className="mx-auto mt-10" times={3} />;
   } else if (isError) {
-    content = <div>Error Loading Disks!</div>;
+    content = (
+      <div className="flex items-center justify-center ">
+        <div className="text-center text-red-500 p-4">
+          Oops! Something went wrong. Please refresh the page.
+        </div>
+      </div>
+    );
   } else if (data.message) {
-    return (
-      <div className="text-xl m-6">
-        You Don't have any swap request, browse{' '}
-        <Link to={'/disks'} className="text-blue-700">
+    content = (
+      <div className="ml-10 items-center justify-center text-dark text-xl">
+        You don't have any swap requests. Browse{' '}
+        <Link to="/disks" className="text-blue-700">
           Disks
         </Link>{' '}
         and start swapping.
       </div>
     );
   } else {
-    content = data.data?.map((swap) => <SwapList key={swap.id} swap={swap} />);
+    content = (
+      <div className="grid grid-cols-1 gap-4">
+        {data.data?.map((swap) => (
+          <SwapList key={swap.id} swap={swap} />
+        ))}
+      </div>
+    );
   }
 
-  return <div>{content}</div>;
+  return (
+    <div className="bg-cover bg-center min-h-screen bg-[url(https://wallpaperaccess.com/full/1891379.png)] p-8">
+      <h1 className="text-4xl font-bold mb-8 text-center text-white">
+        Swap requests
+      </h1>
+      <div className="max-w-3xl mx-auto bg-white bg-opacity-80 p-6 rounded-md shadow-md">
+        {content}
+      </div>
+    </div>
+  );
 }

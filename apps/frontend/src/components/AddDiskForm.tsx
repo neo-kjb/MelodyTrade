@@ -63,13 +63,13 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center min-h-screen bg-gray-50">
+    <div className="flex items-center min-h-screen bg-gray-50 bg-[url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVp6mgc43xfhyPzHYNYwia_BMvVYH36-zDnjbv8a9-6TejiCq-ixONzSuhw5_-wdbvSww&usqp=CAU)]">
       <div className="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
         <div className="flex flex-col md:flex-row">
           <div className="h-32 md:h-auto md:w-1/2">
             <img
               className="object-cover w-full h-full"
-              src="https://wallpaper-house.com/data/out/10/wallpaper2you_446350.jpg"
+              src="https://www.creativefabrica.com/wp-content/uploads/2022/12/22/Aya-Takano-4K-Music-Record-Painting-53980310-1.png"
               alt="img"
             />
           </div>
