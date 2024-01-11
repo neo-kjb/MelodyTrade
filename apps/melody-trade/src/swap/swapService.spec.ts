@@ -1,226 +1,245 @@
-import request from 'supertest'
-import app from '../app'
-import { PrismaClient } from '@prisma/client'
-import { SwapService } from './swapService'
-import { DiskService } from '../disk/diskService'
-import { UserService } from '../user/userService'
+import request from 'supertest';
+import app from '../app';
+import { PrismaClient } from '@prisma/client';
+import { SwapService } from './swapService';
+import { DiskService } from '../disk/diskService';
+import { UserService } from '../user/userService';
 
-
-
-const prisma = new PrismaClient()
-const swapDB = prisma.swap
+const prisma = new PrismaClient();
+const swapDB = prisma.swap;
 
 describe('SwapService', () => {
-    let user1Id
-    let user2Id
-    let diskData1
-    let diskData2
+  let user1Id;
+  let user2Id;
+  let diskData1;
+  let diskData2;
 
-    beforeAll(async () => {
-        await SwapService.deleteAllSwaps()
-        await UserService.deleteAllUsers()
-        await DiskService.deleteAllDisks()
+  beforeAll(async () => {
+    await SwapService.deleteAllSwaps();
+    await UserService.deleteAllUsers();
+    await DiskService.deleteAllDisks();
 
-        await request(app)
-            .post('/auth/signup')
-            .send({
-                username: 'username',
-                email: 'username@email.com',
-                password: 'password',
-            })
-        await request(app)
-            .post('/auth/signup')
-            .send({
-                username: 'username2',
-                email: 'username2@email.com',
-                password: 'password',
-            })
-        const loginResponse1 = await request(app).post('/auth/login').send({
-            email: 'username@email.com',
-            password: 'password',
-        })
-        const loginResponse2 = await request(app).post('/auth/login').send({
-            email: 'username2@email.com',
-            password: 'password',
-        })
-        user1Id = loginResponse1.body.user.id
-        user2Id = loginResponse2.body.user.id
+    await request(app).post('/auth/signup').send({
+      username: 'username',
+      email: 'username@email.com',
+      password: 'password',
+    });
+    await request(app).post('/auth/signup').send({
+      username: 'username2',
+      email: 'username2@email.com',
+      password: 'password',
+    });
+    const loginResponse1 = await request(app).post('/auth/login').send({
+      email: 'username@email.com',
+      password: 'password',
+    });
+    const loginResponse2 = await request(app).post('/auth/login').send({
+      email: 'username2@email.com',
+      password: 'password',
+    });
+    user1Id = loginResponse1.body.user.id;
+    user2Id = loginResponse2.body.user.id;
 
-        diskData1 = {
-            name: 'disk1',
-            description: 'description1',
-            location: 'location1',
-            imageURL: 'https://url1.com',
-            userId: user1Id
-        }
+    diskData1 = {
+      name: 'disk1',
+      description: 'description1',
+      location: 'location1',
+      imageURL: 'https://url1.com',
+      userId: user1Id,
+    };
 
-        diskData2 = {
-            name: 'disk2',
-            description: 'description2',
-            location: 'location2',
-            imageURL: 'https://url2.com',
-            userId: user2Id
-        }
+    diskData2 = {
+      name: 'disk2',
+      description: 'description2',
+      location: 'location2',
+      imageURL: 'https://url2.com',
+      userId: user2Id,
+    };
+  });
+  beforeEach(async () => {
+    await SwapService.deleteAllSwaps();
+  });
 
-    })
-    beforeEach(async () => {
-        await SwapService.deleteAllSwaps()
-    })
+  afterAll(async () => {
+    await prisma.$disconnect();
+    await SwapService.deleteAllSwaps();
+    await DiskService.deleteAllDisks();
+    await UserService.deleteAllUsers();
+  });
 
-    afterAll(async () => {
-        await prisma.$disconnect()
-        await SwapService.deleteAllSwaps()
-        await DiskService.deleteAllDisks()
-        await UserService.deleteAllUsers()
+  test('createSwap should create a new swap', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-    })
+    const result = await SwapService.createSwap(swapData);
 
-    test('createSwap should create a new swap', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+    expect(result).toBeDefined();
+    expect(result.senderId).toBe(swapData.senderId);
+  });
 
+  test('getPendingSwapsForUser should return pending swaps for a user', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData1 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        const result = await SwapService.createSwap(swapData)
+    const swapData2 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'accepted',
+    };
 
-        expect(result).toBeDefined()
-        expect(result.senderId).toBe(swapData.senderId)
-    })
+    await swapDB.create({ data: swapData1 });
+    await swapDB.create({ data: swapData2 });
 
-    test('getPendingSwapsForUser should return pending swaps for a user', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData1 = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+    const result = await SwapService.getPendingSwapsForUser(user1Id);
 
-        const swapData2 = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'accepted'
-        }
+    expect(result).toHaveLength(1);
+    expect(result[0].status).toBe('pending');
+  });
 
-        await swapDB.create({ data: swapData1 })
-        await swapDB.create({ data: swapData2 })
+  test('getPendingSwapByItems should return a pending swap by items', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        const result = await SwapService.getPendingSwapsForUser(user1Id)
+    await swapDB.create({ data: swapData });
 
-        expect(result).toHaveLength(1)
-        expect(result[0].status).toBe('pending')
-    })
+    const result = await SwapService.getPendingSwapByItems(
+      user1Id,
+      diskA.id,
+      diskB.id
+    );
 
-    test('getPendingSwapByItems should return a pending swap by items', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+    expect(result).toBeDefined();
+    expect(result.status).toBe('pending');
+    expect(result.receivedItemId).toBe(swapData.receivedItemId);
+    expect(result.sentItemId).toBe(swapData.sentItemId);
+  });
 
+  test('updateSwapStatus should update the status of a swap', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        await swapDB.create({ data: swapData })
+    const createdSwap = await swapDB.create({ data: swapData });
 
-        const result = await SwapService.getPendingSwapByItems(user1Id, diskA.id, diskB.id)
+    await SwapService.updateSwapStatus(createdSwap.id, 'accepted');
 
-        expect(result).toBeDefined()
-        expect(result.status).toBe('pending')
-        expect(result.receivedItemId).toBe(swapData.receivedItemId)
-        expect(result.sentItemId).toBe(swapData.sentItemId)
-    })
+    const updatedSwap = await swapDB.findFirst({
+      where: { id: createdSwap.id },
+    });
 
-    test('updateSwapStatus should update the status of a swap', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+    expect(updatedSwap).toBeDefined();
+    expect(updatedSwap.status).toBe('accepted');
+  });
 
-        const createdSwap = await swapDB.create({ data: swapData })
+  test('getSwapDetails should return details for a specific swap', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        await SwapService.updateSwapStatus(createdSwap.id, 'accepted')
+    const createdSwap = await swapDB.create({ data: swapData });
 
-        const updatedSwap = await swapDB.findFirst({
-            where: { id: createdSwap.id },
-        })
+    const result = await SwapService.getSwapDetails(createdSwap.id);
 
-        expect(updatedSwap).toBeDefined()
-        expect(updatedSwap.status).toBe('accepted')
-    })
+    expect(result).toBeDefined();
+    expect(result.senderId).toBe(swapData.senderId);
+    expect(result.receiverId).toBe(swapData.receiverId);
+  });
 
-    test('getSwapDetails should return details for a specific swap', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+  test('getSwapDetails should return null for non-existent swap', async () => {
+    const result = await SwapService.getSwapDetails(0);
 
+    expect(result).toBeNull();
+  });
 
+  test('deleteAllSwaps should delete all swaps', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData1 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        const createdSwap = await swapDB.create({ data: swapData })
+    const swapData2 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'accepted',
+    };
 
-        const result = await SwapService.getSwapDetails(createdSwap.id)
+    await swapDB.create({ data: swapData1 });
+    await swapDB.create({ data: swapData2 });
 
-        expect(result).toBeDefined()
-        expect(result.senderId).toBe(swapData.senderId)
-        expect(result.receiverId).toBe(swapData.receiverId)
-    })
+    await SwapService.deleteAllSwaps();
 
-    test('getSwapDetails should return null for non-existent swap', async () => {
-        const result = await SwapService.getSwapDetails(0)
+    const swapsAfterDeletion = await swapDB.findMany();
 
-        expect(result).toBeNull()
-    })
+    expect(swapsAfterDeletion).toHaveLength(0);
+  });
 
-    test('deleteAllSwaps should delete all swaps', async () => {
-        const diskA = await DiskService.createDisk(diskData1)
-        const diskB = await DiskService.createDisk(diskData2)
-        const swapData1 = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'pending'
-        }
+  test('getAcceptedSwapsForUser should return accepted swaps for a user', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+    const swapData1 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
 
-        const swapData2 = {
-            senderId: user1Id,
-            receiverId: user2Id,
-            sentItemId: diskA.id,
-            receivedItemId: diskB.id,
-            status: 'accepted'
-        }
+    const swapData2 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'accepted',
+    };
 
-        await swapDB.create({ data: swapData1 })
-        await swapDB.create({ data: swapData2 })
+    await swapDB.create({ data: swapData1 });
+    await swapDB.create({ data: swapData2 });
 
-        await SwapService.deleteAllSwaps()
+    const result = await SwapService.getAcceptedSwapsForUser(user1Id);
 
-        const swapsAfterDeletion = await swapDB.findMany()
-
-        expect(swapsAfterDeletion).toHaveLength(0)
-    })
-
-})
+    expect(result).toHaveLength(1);
+    expect(result[0].status).toBe('accepted');
+  });
+});
