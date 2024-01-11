@@ -430,4 +430,33 @@ describe('Swap Routes', () => {
       );
     });
   });
+
+  describe('GET /swaps/accepted get accepted swaps', () => {
+    test('should return 200 status code and a count and accepted swaps array', async () => {
+      const SwapCreateResponse = await request(app)
+        .post('/swaps')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({
+          sentItemId: disk1.id,
+          receivedItemId: disk2.id,
+        });
+
+      const acceptSwapResponse = await request(app)
+        .put(`/swaps/${SwapCreateResponse.body.swap.id}/accept`)
+        .set('Authorization', `Bearer ${user2AccessToken}`);
+
+      const getAcceptedSwapsResponse = await request(app)
+        .get('/swaps/accepted')
+        .set('Authorization', `Bearer ${user1AccessToken}`);
+
+      console.log(getAcceptedSwapsResponse.body);
+
+      expect(getAcceptedSwapsResponse.statusCode).toBe(200);
+      expect(getAcceptedSwapsResponse.body.count).toBe(1);
+
+      getAcceptedSwapsResponse.body.data.map((swap) => {
+        expect(swap.status).toBe('accepted');
+      });
+    });
+  });
 });

@@ -78,3 +78,19 @@ export const cancelSwap = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+export const getAcceptedSwaps = async (req: Request, res: Response) => {
+  try {
+    const userId = req.reqUserId;
+    const acceptedSwaps = await SwapService.getAcceptedSwapsForUser(userId);
+    res
+      .status(200)
+      .send(
+        acceptedSwaps.length
+          ? { count: acceptedSwaps.length, data: acceptedSwaps }
+          : { message: "You don't have accepted swaps" }
+      );
+  } catch (error) {
+    console.log('Error getting accepted swaps:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
