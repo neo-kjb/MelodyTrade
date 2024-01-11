@@ -45,4 +45,5 @@ export {
   useGetPendingSwapsQuery,
   useGetSwapDetailsQuery,
   useRejectSwapMutation,
+  useGetSwapHistoryQuery,
 } from './apis/swapsApi';

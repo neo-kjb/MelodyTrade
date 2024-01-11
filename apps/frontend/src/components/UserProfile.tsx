@@ -6,10 +6,12 @@ export default function UserProfile({ user }) {
       <img
         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEWmvOd3wx2xgbP6-heFfS7-QPqV03G-IDMH45ix9aYw&s"
         alt={`${user.username}'s profile`}
-        className="w-20 h-20 rounded-full mr-4"
+        className="w-20 h-20 rounded-full mr-4 object-cover"
       />
       <div>
-        <p className="text-lg font-semibold">{user.username}</p>
+        <div className="bg-gray-800 rounded-md p-2">
+          <p className="text-xl font-bold text-white">{user.username}</p>
+        </div>
       </div>
     </div>
   );

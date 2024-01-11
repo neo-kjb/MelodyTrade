@@ -31,7 +31,9 @@ export default function UserDisks({ user }) {
               alt={`${disk.name} disk`}
               className="w-32 h-32 rounded-full mb-2"
             />
-            <p className="text-base">{disk.name}</p>
+            <div className="bg-gray-500 rounded-md p-2">
+              <p className="text-base font-bold text-white">{disk.name}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -43,7 +45,9 @@ export default function UserDisks({ user }) {
 
   return (
     <div className="text-center">
-      <h2 className="text-2xl font-bold mb-4">Disks</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        Disks {`(${data?.count || 0})`}
+      </h2>
       <hr className="my-2" />
       <div className="flex justify-center mt-4">{content}</div>
     </div>

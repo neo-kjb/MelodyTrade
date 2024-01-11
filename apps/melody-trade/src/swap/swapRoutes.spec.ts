@@ -432,6 +432,9 @@ describe('Swap Routes', () => {
   });
 
   describe('GET /swaps/accepted get accepted swaps', () => {
+    beforeEach(async () => {
+      await SwapService.deleteAllSwaps();
+    });
     test('should return 200 status code and a count and accepted swaps array', async () => {
       const SwapCreateResponse = await request(app)
         .post('/swaps')

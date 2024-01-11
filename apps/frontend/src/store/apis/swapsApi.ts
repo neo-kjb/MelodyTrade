@@ -79,6 +79,17 @@ const swapsApi = createApi({
           };
         },
       }),
+      getSwapHistory: builder.query({
+        query: () => {
+          return {
+            url: '/accepted',
+            method: 'GET',
+            headers: {
+              Authorization: 'Bearer ' + getAuthToken(),
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -91,4 +102,5 @@ export const {
   useGetPendingSwapsQuery,
   useGetSwapDetailsQuery,
   useRejectSwapMutation,
+  useGetSwapHistoryQuery,
 } = swapsApi;
