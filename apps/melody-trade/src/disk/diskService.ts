@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { swapDB } from '../swap/swapService';
 const prisma = new PrismaClient();
 const diskDB = prisma.item;
 
@@ -29,7 +30,25 @@ export class DiskService {
   }
 
   static async getAllDisks() {
+    const acceptedSwaps = await swapDB.findMany({
+      where: {
+        status: 'accepted',
+      },
+      select: {
+        sentItemId: true,
+        receivedItemId: true,
+      },
+    });
+
+    const excludedDiskIds = acceptedSwaps.flatMap((swap) => [
+      swap.sentItemId,
+      swap.receivedItemId,
+    ]);
+
     return await diskDB.findMany({
+      where: {
+        id: { notIn: excludedDiskIds },
+      },
       include: {
         user: true,
       },
@@ -65,6 +84,13 @@ export class DiskService {
       include: {
         user: true,
       },
+    });
+  }
+
+  static async updateDiskOwner(diskId: number, newOwnerId: number) {
+    return await diskDB.update({
+      where: { id: diskId },
+      data: { userId: newOwnerId },
     });
   }
 }

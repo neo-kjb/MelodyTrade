@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { SwapService } from './swapService';
+import { DiskService } from '../disk/diskService';
 
 export const createSwap = async (req: Request, res: Response) => {
   try {
@@ -45,6 +46,16 @@ export const acceptSwap = async (req: Request, res: Response) => {
   try {
     const swapId = parseInt(req.params.swapId, 10);
     const updatedSwap = await SwapService.updateSwapStatus(swapId, 'accepted');
+    if (updatedSwap.status === 'accepted') {
+      await DiskService.updateDiskOwner(
+        updatedSwap.receivedItemId,
+        updatedSwap.senderId
+      );
+      await DiskService.updateDiskOwner(
+        updatedSwap.sentItemId,
+        updatedSwap.receiverId
+      );
+    }
     res
       .status(200)
       .send({ message: 'Swap request accepted successfully', updatedSwap });
@@ -94,3 +105,5 @@ export const getAcceptedSwaps = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
+//test is the reciver
