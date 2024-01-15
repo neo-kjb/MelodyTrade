@@ -7,12 +7,14 @@ import {
 } from '../store';
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
+import { getAuthToken } from '../utils/getAuthToken';
 
 const SwapList = ({ swap }) => {
+  const token = getAuthToken();
   const navigate = useNavigate();
   const [isSender, setIsSender] = useState(false);
   const [isReceiver, setIsReceiver] = useState(false);
-  const { data, isSuccess } = useGetCurUserQuery();
+  const { data, isSuccess } = useGetCurUserQuery(token);
 
   const [cancelSwap, cancelResults] = useCancelSwapMutation();
   const [acceptSwap, acceptResults] = useAcceptSwapMutation();

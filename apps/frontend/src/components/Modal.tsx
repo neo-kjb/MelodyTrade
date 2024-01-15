@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useGetCurUserQuery, useGetDisksByUsernameQuery } from '../store';
 import DiskImage from './DiskImage';
 import { Link } from 'react-router-dom';
+import { getAuthToken } from '../utils/getAuthToken';
 
 export default function Modal({ onClose, onSelect }) {
+  const token = getAuthToken();
   const [showModal, setShowModal] = useState(false);
   const [sentDisk, setSentDisk] = useState(null);
 
-  const { data } = useGetCurUserQuery();
+  const { data } = useGetCurUserQuery(token);
 
   const handleSetSelectedDisk = (disk) => {
     setSentDisk(disk);

@@ -7,13 +7,15 @@ import SwapHistory from '../../components/SwapHistory';
 import { enqueueSnackbar } from 'notistack';
 import NotFound from '../../components/NotFound';
 import Skeleton from '../../components/Skeleton';
+import { getAuthToken } from '../../utils/getAuthToken';
 
 export default function UserDetailsPage() {
+  const token = getAuthToken();
   const { userId } = useParams();
   const { data, isLoading, isError, isSuccess, error } =
     useGetUserDetailsQuery(userId);
 
-  const { data: CurrentUserData } = useGetCurUserQuery();
+  const { data: CurrentUserData } = useGetCurUserQuery(token);
 
   const isPageOwner = CurrentUserData?.currUserId === data?.id;
 

@@ -6,9 +6,11 @@ const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:3333/auth',
   }),
+  tagTypes: ['User'],
   endpoints(builder) {
     return {
       addUser: builder.mutation({
+        invalidatesTags: ['User'],
         query: (user) => {
           const { username, email, password } = user;
           return {
@@ -23,6 +25,7 @@ const usersApi = createApi({
         },
       }),
       loginUser: builder.mutation({
+        invalidatesTags: ['User'],
         query: (user) => {
           const { email, password } = user;
           return {
@@ -36,17 +39,19 @@ const usersApi = createApi({
         },
       }),
       getCurUser: builder.query({
-        query: () => {
+        providesTags: ['User'],
+        query: (token) => {
           return {
             url: '/auth',
             method: 'GET',
             headers: {
-              Authorization: 'Bearer ' + getAuthToken(),
+              Authorization: 'Bearer ' + token,
             },
           };
         },
       }),
       getUserDetails: builder.query({
+        providesTags: ['User'],
         query: (userId) => {
           return {
             url: `/${userId}`,
@@ -55,6 +60,7 @@ const usersApi = createApi({
         },
       }),
       logoutUser: builder.mutation({
+        invalidatesTags: ['User'],
         query: () => {
           return {
             url: '/logout',

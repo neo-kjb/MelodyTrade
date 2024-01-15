@@ -19,7 +19,7 @@ export default function DiskDetails({ disk }) {
 
   const [createSwap, results] = useCreateSwapMutation();
   const [deleteDisk, deleteDiskResults] = useDeleteDiskMutation();
-  const { data } = useGetCurUserQuery();
+  const { data } = useGetCurUserQuery(token);
 
   const openModal = () => {
     setIsSwapping(true);

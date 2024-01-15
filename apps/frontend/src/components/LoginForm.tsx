@@ -28,7 +28,6 @@ export default function LoginForm() {
 
     try {
       const data = await loginUser(userData).unwrap();
-      console.log(data);
 
       localStorage.setItem('token', data.accessToken);
       enqueueSnackbar('Logged in successfully', { variant: 'success' });

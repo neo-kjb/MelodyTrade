@@ -10,7 +10,7 @@ export default function MainNavigation() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [logout] = useLogoutUserMutation();
-  const { data } = useGetCurUserQuery();
+  const { data } = useGetCurUserQuery(token);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -23,7 +23,6 @@ export default function MainNavigation() {
       logout();
       navigate('/');
       enqueueSnackbar('Logout Successfully', { variant: 'success' });
-      return;
     } else {
       return;
     }
@@ -122,7 +121,7 @@ export default function MainNavigation() {
               </li>
             )}
 
-            {token && (
+            {token && data && (
               <li>
                 <NavLink
                   to={`/users/${data?.currUserId}`}
@@ -133,7 +132,7 @@ export default function MainNavigation() {
                   }
                   end
                 >
-                  My Account
+                  {data?.currUserName}
                 </NavLink>
               </li>
             )}
