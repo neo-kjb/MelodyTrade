@@ -6,9 +6,11 @@ const disksApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:3333/disks',
   }),
+  tagTypes: ['Disk'],
   endpoints(builder) {
     return {
       getAllDisks: builder.query({
+        providesTags: ['Disk'],
         query: () => {
           return {
             url: '/',
@@ -17,6 +19,7 @@ const disksApi = createApi({
         },
       }),
       createDisk: builder.mutation({
+        invalidatesTags: ['Disk'],
         query: (disk) => {
           const { name, description, location, imageURL } = disk;
           return {
@@ -35,6 +38,7 @@ const disksApi = createApi({
         },
       }),
       getDiskDetails: builder.query({
+        providesTags: ['Disk'],
         query: (diskId) => {
           return {
             url: `/${diskId}`,
@@ -43,6 +47,7 @@ const disksApi = createApi({
         },
       }),
       getDisksByUsername: builder.query({
+        providesTags: ['Disk'],
         query: (username) => {
           return {
             url: `/user/${username}`,
@@ -51,6 +56,7 @@ const disksApi = createApi({
         },
       }),
       editDisk: builder.mutation({
+        invalidatesTags: ['Disk'],
         query: (disk) => {
           const { name, description, location, imageURL } = disk;
           return {
@@ -64,6 +70,7 @@ const disksApi = createApi({
         },
       }),
       deleteDisk: builder.mutation({
+        invalidatesTags: ['Disk'],
         query: (diskId) => {
           return {
             url: `/${diskId}`,
