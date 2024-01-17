@@ -16,7 +16,8 @@ export default function MainNavigation() {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const logoutHandler = () => {
+  const logoutHandler = (e: Event) => {
+    e.preventDefault();
     const confirm = window.confirm('Are You Sure ?');
     if (confirm) {
       localStorage.removeItem('token');

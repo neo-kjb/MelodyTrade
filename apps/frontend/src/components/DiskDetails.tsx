@@ -25,8 +25,17 @@ export default function DiskDetails({ disk }) {
     setIsSwapping(true);
   };
 
-  const handleDeleteDisk = () => {
-    deleteDisk(disk.id);
+  const handleDeleteDisk = (e: Event) => {
+    e.preventDefault();
+    const confirmDeleteDisk = window.confirm(
+      'Are you sure you want to delete the disk and its associated swap history?'
+    );
+    if (confirmDeleteDisk) {
+      deleteDisk(disk.id);
+      navigate(`/users/${disk.userId}`);
+    } else {
+      return;
+    }
   };
   console.log(deleteDiskResults);
 
@@ -164,6 +173,7 @@ export default function DiskDetails({ disk }) {
                     Edit
                   </button>
                   <button
+                    disabled={deleteDiskResults.isLoading}
                     type="button"
                     onClick={handleDeleteDisk}
                     className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-400 focus:outline-none focus:bg-red-400"

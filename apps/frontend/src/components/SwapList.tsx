@@ -24,14 +24,19 @@ const SwapList = ({ swap }) => {
     let currUserId;
     if (isSuccess) {
       currUserId = data.currUserId;
-      if (currUserId === swap.senderId) {
+      if (currUserId === swap.sentItem.userId) {
         setIsSender(true);
       }
-      if (currUserId === swap.receiverId) {
+      if (currUserId === swap.receivedItem.userId) {
         setIsReceiver(true);
       }
     }
-  }, [isSuccess, data?.currUserId, swap.senderId, swap.receiverId]);
+  }, [
+    isSuccess,
+    data.currUserId,
+    swap.sentItem.userId,
+    swap.receivedItem.userId,
+  ]);
 
   const handleCancelRequest = () => {
     cancelSwap(swap.id);
