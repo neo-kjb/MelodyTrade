@@ -4,10 +4,14 @@ import { useSnackbar } from 'notistack';
 import Skeleton from '../../components/Skeleton';
 import { Link } from 'react-router-dom';
 import SwapList from '../../components/SwapList';
+import { getAuthToken } from '../../utils/getAuthToken';
 
 export default function SwapRequestPage() {
+  const token = getAuthToken();
   const { enqueueSnackbar } = useSnackbar();
-  const { data, isSuccess, isLoading, isError } = useGetPendingSwapsQuery();
+  const { data, isLoading, isError } = useGetPendingSwapsQuery(token, {
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (isLoading) {

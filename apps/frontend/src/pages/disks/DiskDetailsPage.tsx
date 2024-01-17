@@ -10,7 +10,9 @@ export default function DiskDetailsPage() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { diskId } = useParams();
-  const { data, isFetching, isError } = useGetDiskDetailsQuery(diskId);
+  const { data, isFetching, isError } = useGetDiskDetailsQuery(diskId, {
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (!isFetching) {

@@ -5,8 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function SwapHistory({ user }) {
   const navigate = useNavigate();
-  const { data, isLoading, isError, isSuccess } = useGetSwapHistoryQuery();
-  console.log(data?.data);
+  const { data, isLoading, isError, isSuccess } = useGetSwapHistoryQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
 
   let content;
   if (isLoading) {

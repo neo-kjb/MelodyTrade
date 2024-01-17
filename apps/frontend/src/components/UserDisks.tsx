@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 export default function UserDisks({ user }) {
   const navigate = useNavigate();
   const { data, isLoading, isSuccess, isError } = useGetDisksByUsernameQuery(
-    user.username
+    user.username,
+    { refetchOnMountOrArgChange: true }
   );
   let content;
   if (isLoading) {

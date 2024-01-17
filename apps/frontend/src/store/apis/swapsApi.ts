@@ -6,10 +6,11 @@ const swapsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:3333/swaps',
   }),
-
+  tagTypes: ['Swap'],
   endpoints(builder) {
     return {
       createSwap: builder.mutation({
+        invalidatesTags: ['Swap'],
         query: ({ sentItemId, receivedItemId }) => {
           return {
             url: '/',
@@ -25,17 +26,19 @@ const swapsApi = createApi({
         },
       }),
       getPendingSwaps: builder.query({
-        query: () => {
+        providesTags: ['Swap'],
+        query: (token) => {
           return {
             url: '/',
             method: 'GET',
             headers: {
-              Authorization: 'Bearer ' + getAuthToken(),
+              Authorization: 'Bearer ' + token,
             },
           };
         },
       }),
       getSwapDetails: builder.query({
+        providesTags: ['Swap'],
         query: (swapId) => {
           return {
             url: `/${swapId}`,
@@ -47,6 +50,7 @@ const swapsApi = createApi({
         },
       }),
       acceptSwap: builder.mutation({
+        invalidatesTags: ['Swap'],
         query: (swapId) => {
           return {
             url: `/${swapId}/accept`,
@@ -58,6 +62,7 @@ const swapsApi = createApi({
         },
       }),
       rejectSwap: builder.mutation({
+        invalidatesTags: ['Swap'],
         query: (swapId) => {
           return {
             url: `/${swapId}/reject`,
@@ -69,6 +74,7 @@ const swapsApi = createApi({
         },
       }),
       cancelSwap: builder.mutation({
+        invalidatesTags: ['Swap'],
         query: (swapId) => {
           return {
             url: `/${swapId}/cancel`,
@@ -80,6 +86,7 @@ const swapsApi = createApi({
         },
       }),
       getSwapHistory: builder.query({
+        providesTags: ['Swap'],
         query: () => {
           return {
             url: '/accepted',
