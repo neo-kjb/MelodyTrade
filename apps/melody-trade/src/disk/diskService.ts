@@ -30,29 +30,7 @@ export class DiskService {
   }
 
   static async getAllDisks() {
-    const acceptedSwaps = await swapDB.findMany({
-      where: {
-        status: 'accepted',
-      },
-      select: {
-        sentItemId: true,
-        receivedItemId: true,
-      },
-    });
-
-    const excludedDiskIds = acceptedSwaps.flatMap((swap) => [
-      swap.sentItemId,
-      swap.receivedItemId,
-    ]);
-
-    return await diskDB.findMany({
-      where: {
-        id: { notIn: excludedDiskIds },
-      },
-      include: {
-        user: true,
-      },
-    });
+    return await diskDB.findMany({});
   }
 
   static async updateDisk(id: number, data: Partial<Disk>) {

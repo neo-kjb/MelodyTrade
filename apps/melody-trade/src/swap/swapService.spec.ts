@@ -242,4 +242,35 @@ describe('SwapService', () => {
     expect(result).toHaveLength(1);
     expect(result[0].status).toBe('accepted');
   });
+
+  test('deleteRelatedSwapRequests should delete related pending swap requests', async () => {
+    const diskA = await DiskService.createDisk(diskData1);
+    const diskB = await DiskService.createDisk(diskData2);
+
+    const swapData1 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'pending',
+    };
+
+    const swapData2 = {
+      senderId: user1Id,
+      receiverId: user2Id,
+      sentItemId: diskA.id,
+      receivedItemId: diskB.id,
+      status: 'accepted',
+    };
+
+    await swapDB.create({ data: swapData1 });
+    await swapDB.create({ data: swapData2 });
+
+    await SwapService.deleteRelatedSwapRequests(diskB.id);
+
+    const remainingSwaps = await swapDB.findMany();
+
+    expect(remainingSwaps).toHaveLength(1);
+    expect(remainingSwaps[0].status).toBe('accepted');
+  });
 });

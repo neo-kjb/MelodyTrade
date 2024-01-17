@@ -47,6 +47,8 @@ export const acceptSwap = async (req: Request, res: Response) => {
     const swapId = parseInt(req.params.swapId, 10);
     const updatedSwap = await SwapService.updateSwapStatus(swapId, 'accepted');
     if (updatedSwap.status === 'accepted') {
+      await SwapService.deleteRelatedSwapRequests(updatedSwap.receivedItemId);
+
       await DiskService.updateDiskOwner(
         updatedSwap.receivedItemId,
         updatedSwap.senderId
@@ -105,5 +107,3 @@ export const getAcceptedSwaps = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
-
-//test is the reciver

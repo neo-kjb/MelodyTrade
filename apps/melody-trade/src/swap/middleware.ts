@@ -12,7 +12,6 @@ export const validateSwapRequest = async (
     const { sentItemId, receivedItemId } = req.body;
 
     const existingSwap = await SwapService.getPendingSwapByItems(
-      senderId,
       sentItemId,
       receivedItemId
     );

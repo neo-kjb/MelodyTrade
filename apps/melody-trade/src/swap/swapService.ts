@@ -28,7 +28,7 @@ export class SwapService {
     return await swapDB.findMany({
       where: {
         status: 'pending',
-        OR: [{ senderId: userId }, { receiverId: userId }],
+        OR: [{ sentItem: { userId } }, { receivedItem: { userId } }],
       },
       include: {
         sentItem: true,
@@ -38,18 +38,30 @@ export class SwapService {
   }
 
   static async getPendingSwapByItems(
-    senderId: number,
     sentItemId: number,
     receivedItemId: number
   ) {
-    return await swapDB.findFirst({
+    const swap1 = await swapDB.findFirst({
       where: {
-        senderId,
         sentItemId,
         receivedItemId,
         status: 'pending',
       },
     });
+
+    if (swap1) {
+      return swap1;
+    }
+
+    const swap2 = await swapDB.findFirst({
+      where: {
+        sentItemId: receivedItemId,
+        receivedItemId: sentItemId,
+        status: 'pending',
+      },
+    });
+
+    return swap2;
   }
 
   static async getSwapDetails(swapId: number) {
@@ -80,6 +92,15 @@ export class SwapService {
       include: {
         sentItem: true,
         receivedItem: true,
+      },
+    });
+  }
+
+  static async deleteRelatedSwapRequests(receivedItemId: number) {
+    return await swapDB.deleteMany({
+      where: {
+        receivedItemId,
+        status: 'pending',
       },
     });
   }
