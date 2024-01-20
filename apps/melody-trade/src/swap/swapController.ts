@@ -47,7 +47,10 @@ export const acceptSwap = async (req: Request, res: Response) => {
     const swapId = parseInt(req.params.swapId, 10);
     const updatedSwap = await SwapService.updateSwapStatus(swapId, 'accepted');
     if (updatedSwap.status === 'accepted') {
-      await SwapService.deleteRelatedSwapRequests(updatedSwap.receivedItemId);
+      await SwapService.deleteRelatedSwapRequests(
+        updatedSwap.receivedItemId,
+        updatedSwap.sentItemId
+      );
 
       await DiskService.updateDiskOwner(
         updatedSwap.receivedItemId,

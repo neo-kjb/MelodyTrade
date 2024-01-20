@@ -125,11 +125,7 @@ describe('SwapService', () => {
 
     await swapDB.create({ data: swapData });
 
-    const result = await SwapService.getPendingSwapByItems(
-      user1Id,
-      diskA.id,
-      diskB.id
-    );
+    const result = await SwapService.getPendingSwapByItems(diskA.id, diskB.id);
 
     expect(result).toBeDefined();
     expect(result.status).toBe('pending');
@@ -266,7 +262,7 @@ describe('SwapService', () => {
     await swapDB.create({ data: swapData1 });
     await swapDB.create({ data: swapData2 });
 
-    await SwapService.deleteRelatedSwapRequests(diskB.id);
+    await SwapService.deleteRelatedSwapRequests(diskB.id, diskA.id);
 
     const remainingSwaps = await swapDB.findMany();
 

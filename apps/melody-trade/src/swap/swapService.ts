@@ -96,11 +96,14 @@ export class SwapService {
     });
   }
 
-  static async deleteRelatedSwapRequests(receivedItemId: number) {
+  static async deleteRelatedSwapRequests(
+    receivedItemId: number,
+    sentItemId: number
+  ) {
     return await swapDB.deleteMany({
       where: {
-        receivedItemId,
         status: 'pending',
+        OR: [{ receivedItemId }, { sentItemId }],
       },
     });
   }
