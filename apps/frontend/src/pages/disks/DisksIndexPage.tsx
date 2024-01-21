@@ -5,9 +5,13 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const ITEMS_PER_PAGE = 9;
+
 export default function DisksIndexPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(1);
 
   const { data, isLoading, isError, isSuccess } = useGetAllDisksQuery('');
 
@@ -27,6 +31,29 @@ export default function DisksIndexPage() {
         disk.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
+
+  useEffect(() => {
+    if (searchQuery !== '') {
+      setPrevPage(currentPage);
+      setCurrentPage(1);
+    }
+  }, [currentPage, searchQuery]);
+
+  useEffect(() => {
+    if (prevPage !== currentPage) {
+      setPrevPage(currentPage);
+    }
+  }, [currentPage, prevPage]);
+
+  const totalPages = Math.ceil(filteredDisks.length / ITEMS_PER_PAGE);
+  const indexOfLastDisk = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstDisk = indexOfLastDisk - ITEMS_PER_PAGE;
+  const currentDisks = filteredDisks.slice(indexOfFirstDisk, indexOfLastDisk);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -64,7 +91,7 @@ export default function DisksIndexPage() {
           {isLoading && <Skeleton className="h-72 w-full" times={6} />}
           {isError && <div className="text-red-600">Error Loading Disks!</div>}
           {isSuccess &&
-            (filteredDisks.length === 0 ? (
+            (currentDisks.length === 0 ? (
               <div className="text-xl m-6 text-white">
                 No disks found.{' '}
                 <Link to={'/users/login'} className="text-blue-700">
@@ -73,11 +100,24 @@ export default function DisksIndexPage() {
                 and start adding disks.
               </div>
             ) : (
-              filteredDisks.map((disk) => (
-                <DiskItem key={disk.id} disk={disk} />
-              ))
+              currentDisks.map((disk) => <DiskItem key={disk.id} disk={disk} />)
             ))}
         </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4">
+            {[...Array(totalPages).keys()].map((page) => (
+              <button
+                key={page + 1}
+                onClick={() => handlePageChange(page + 1)}
+                className={`mx-1 px-4 py-2 bg-blue-500 text-white rounded ${
+                  currentPage === page + 1 && 'bg-blue-700'
+                }`}
+              >
+                {page + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
