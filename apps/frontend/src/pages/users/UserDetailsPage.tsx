@@ -41,7 +41,7 @@ export default function UserDetailsPage() {
       <div className="relative min-h-screen bg-[url(https://cdn.wallpapersafari.com/50/13/jF6QLc.jpg)] bg-cover bg-center p-0 m-0 flex flex-col">
         <UserProfile user={data} />
         <UserDisks user={data} />
-        {isPageOwner && <SwapHistory user={data} />}
+        {isPageOwner && <SwapHistory />}
       </div>
     )
   );

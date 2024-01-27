@@ -2,8 +2,9 @@ import React from 'react';
 import { useGetSwapHistoryQuery } from '../store';
 import Skeleton from './Skeleton';
 import { useNavigate } from 'react-router-dom';
+import { Swap } from '@melody-trade/api-interfaces';
 
-export default function SwapHistory({ user }) {
+export default function SwapHistory() {
   const navigate = useNavigate();
   const { data, isLoading, isError, isSuccess } = useGetSwapHistoryQuery(
     {},
@@ -18,7 +19,7 @@ export default function SwapHistory({ user }) {
   } else if (isSuccess) {
     content = (
       <div className="flex flex-col items-center">
-        {data?.data?.map((swap, index) => (
+        {data?.data?.map((swap: Swap, index: number) => (
           <div
             key={index}
             className="bg-white rounded-lg shadow-md p-4 mb-4 transition-transform transform hover:scale-105 flex flex-col items-center"

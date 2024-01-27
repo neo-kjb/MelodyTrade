@@ -4,13 +4,19 @@ import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
+interface ErrorObject {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
 export default function SignupForm() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<ErrorObject>({});
 
   const [addUser, results] = useAddUserMutation();
 
@@ -20,7 +26,7 @@ export default function SignupForm() {
     }
   }, [results.isLoading, enqueueSnackbar]);
 
-  const handleSignupSubmit = async (e) => {
+  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const userData = {
       username,
@@ -34,7 +40,7 @@ export default function SignupForm() {
       localStorage.setItem('token', data.accessToken);
       enqueueSnackbar('User created successfully', { variant: 'success' });
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       if (error.status === 'FETCH_ERROR' || error.status === 500) {
         enqueueSnackbar('Connection error, please refresh the page', {
           variant: 'error',
@@ -42,12 +48,12 @@ export default function SignupForm() {
       }
       if (error.status === 400 && error.data.errors) {
         const errorArray = error.data.errors;
-        const errorObject = {};
+        const errorObject: ErrorObject = {};
         enqueueSnackbar('Creating User Failed', {
           variant: 'error',
         });
-        errorArray.forEach((errorItem) => {
-          errorObject[errorItem.path] = errorItem.message;
+        errorArray.forEach((errorItem: { path: string; message: string }) => {
+          errorObject[errorItem.path as keyof ErrorObject] = errorItem.message;
         });
 
         setErrors(errorObject);

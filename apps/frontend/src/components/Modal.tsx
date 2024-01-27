@@ -3,21 +3,29 @@ import { useGetCurUserQuery, useGetDisksByUsernameQuery } from '../store';
 import DiskImage from './DiskImage';
 import { Link } from 'react-router-dom';
 import { getAuthToken } from '../utils/getAuthToken';
+import { Item } from '@melody-trade/api-interfaces';
 
-export default function Modal({ onClose, onSelect }) {
+interface ModalProps {
+  onClose: () => void;
+  onSelect: (disk: Item) => void;
+}
+
+export default function Modal({ onClose, onSelect }: ModalProps) {
   const token = getAuthToken();
   const [showModal, setShowModal] = useState(false);
-  const [sentDisk, setSentDisk] = useState(null);
+  const [sentDisk, setSentDisk] = useState<Item | null>(null);
 
   const { data } = useGetCurUserQuery(token);
 
-  const handleSetSelectedDisk = (disk) => {
+  const handleSetSelectedDisk = (disk: Item) => {
     setSentDisk(disk);
   };
 
   const handleSelectDiskToSwap = () => {
-    onSelect(sentDisk);
-    onClose();
+    if (sentDisk) {
+      onSelect(sentDisk);
+      onClose();
+    }
   };
 
   const {
@@ -44,7 +52,7 @@ export default function Modal({ onClose, onSelect }) {
       </p>
     );
   } else {
-    content = disks.data?.map((disk) => (
+    content = disks.data?.map((disk: Item) => (
       <DiskImage
         key={disk.id}
         disk={disk}

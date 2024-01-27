@@ -1,6 +1,8 @@
+import { User } from '@melody-trade/api-interfaces';
 import React from 'react';
 
-export default function UserProfile({ user }) {
+export default function UserProfile(props: { user: User }) {
+  const { user } = props;
   return (
     <div className="mt-5 ml-5 flex items-center">
       <img

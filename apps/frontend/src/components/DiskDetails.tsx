@@ -8,8 +8,10 @@ import {
 } from '../store';
 import { useSnackbar } from 'notistack';
 import { getAuthToken } from '../utils/getAuthToken';
+import { Item } from '@melody-trade/api-interfaces';
 
-export default function DiskDetails({ disk }) {
+export default function DiskDetails(props: { disk: Item }) {
+  const { disk } = props;
   const navigate = useNavigate();
   const token = getAuthToken();
   const { enqueueSnackbar } = useSnackbar();
@@ -25,7 +27,7 @@ export default function DiskDetails({ disk }) {
     setIsSwapping(true);
   };
 
-  const handleDeleteDisk = (e: Event) => {
+  const handleDeleteDisk = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const confirmDeleteDisk = window.confirm(
       'Are you sure you want to delete the disk and its associated swap history?'
@@ -39,7 +41,7 @@ export default function DiskDetails({ disk }) {
   };
   console.log(deleteDiskResults);
 
-  const handleSelectDiskToSwap = (senderDisk) => {
+  const handleSelectDiskToSwap = (senderDisk: Item) => {
     const swapData = {
       sentItemId: senderDisk.id,
       receivedItemId: disk.id,
@@ -55,30 +57,35 @@ export default function DiskDetails({ disk }) {
       navigate('/swaps');
     }
 
-    if (results.error?.data?.message) {
-      enqueueSnackbar(results.error.data.message, {
-        variant: 'error',
-      });
-    }
-
     if (data?.currUserId === disk.userId || !token) {
       setIsDisplaySwapButton(false);
     }
 
     if (deleteDiskResults.isSuccess) {
       enqueueSnackbar('Disk Deleted Successfully', { variant: 'success' });
-      navigate('/disks');
     }
     if (deleteDiskResults.isLoading) {
       enqueueSnackbar('Deleting your disk...', { variant: 'info' });
     }
+    if (results.error && 'data' in results.error) {
+      const errorData = results.error as { data: { message: string } };
 
-    if (deleteDiskResults.isError) {
-      enqueueSnackbar(deleteDiskResults.error?.data?.message, {
+      enqueueSnackbar(errorData.data.message, {
+        variant: 'error',
+      });
+    }
+
+    if (deleteDiskResults.isError && 'data' in deleteDiskResults.error) {
+      const deleteErrorData = deleteDiskResults.error as {
+        data: { message: string };
+      };
+      enqueueSnackbar(deleteErrorData.data.message, {
         variant: 'error',
       });
     }
   }, [
+    deleteDiskResults.error,
+    results.error,
     data?.currUserId,
     deleteDiskResults.error?.data?.message,
     deleteDiskResults.isError,
@@ -148,7 +155,7 @@ export default function DiskDetails({ disk }) {
                   to={`/users/${disk.userId}`}
                   className="mt-1 p-2 font-semibold transition-colors duration-200 ease-in-out text-lg/normal text-blue-500 hover:text-blue-300"
                 >
-                  {disk.user.username}
+                  {disk.user && disk.user.username}
                 </Link>
               </div>
 

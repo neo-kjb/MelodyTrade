@@ -2,17 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useEditDiskMutation } from '../store';
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
+import { Item } from '@melody-trade/api-interfaces';
 
-export default function EditDiskForm({ disk }) {
+interface FormErrors {
+  name?: string;
+  description?: string;
+  imageURL?: string;
+  location?: string;
+}
+
+export default function EditDiskForm(props: { disk: Item }) {
+  const { disk } = props;
   const navigate = useNavigate();
   const [name, setName] = useState(disk.name);
   const [description, setDescription] = useState(disk.description);
   const [location, setLocation] = useState(disk.location);
   const [imageURL, setImageURL] = useState(disk.imageURL);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [editDisk, results] = useEditDiskMutation();
 
-  const handleEditDisk = (e: Event) => {
+  const handleEditDisk = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newDiskData = {
       name,
@@ -26,23 +35,28 @@ export default function EditDiskForm({ disk }) {
 
   useEffect(() => {
     if (results.isError) {
-      if (results.error?.data?.message === 'Invalid input') {
-        const errorArray = results.error?.data?.errors;
-        const errorObject = {};
-        enqueueSnackbar('Editing Disk Failed', {
-          variant: 'error',
-        });
-        errorArray.forEach((errorItem) => {
-          errorObject[errorItem.path] = errorItem.message;
-        });
-        setErrors(errorObject);
-      }
-      if (
-        results.error?.status === 400 ||
-        results.error?.status === 404 ||
-        results.error?.status === 401
-      ) {
-        enqueueSnackbar(results.error?.data?.message, { variant: 'error' });
+      if ('status' in results.error) {
+        if (results.error?.data?.message === 'Invalid input') {
+          const errorArray: { path: string; message: string }[] =
+            results.error?.data?.errors || [];
+          const errorObject: FormErrors = {};
+          enqueueSnackbar('Editing Disk Failed', {
+            variant: 'error',
+          });
+          errorArray.forEach((errorItem) => {
+            errorObject[errorItem.path as keyof FormErrors] = errorItem.message;
+          });
+          setErrors(errorObject);
+        }
+        if (
+          results.error?.status === 400 ||
+          results.error?.status === 404 ||
+          results.error?.status === 401
+        ) {
+          enqueueSnackbar(results.error?.data?.message || 'An error occurred', {
+            variant: 'error',
+          });
+        }
       }
     }
 
@@ -51,6 +65,7 @@ export default function EditDiskForm({ disk }) {
       navigate(`/disks/${disk.id}`);
     }
   }, [
+    results.error,
     disk.id,
     navigate,
     results.error?.data?.errors,

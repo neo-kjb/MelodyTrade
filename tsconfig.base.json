@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@melody-trade/api-interfaces": ["libs/api-interfaces/src/index.ts"],
       "@melody-trade/user": ["libs/user/src/index.ts"]
     }
   },

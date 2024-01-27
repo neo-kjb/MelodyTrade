@@ -16,12 +16,14 @@ export default function MainNavigation() {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const logoutHandler = (e: Event) => {
+  const logoutHandler = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
     e.preventDefault();
     const confirm = window.confirm('Are You Sure ?');
     if (confirm) {
       localStorage.removeItem('token');
-      logout();
+      logout('');
       navigate('/');
       enqueueSnackbar('Logout Successfully', { variant: 'success' });
     } else {

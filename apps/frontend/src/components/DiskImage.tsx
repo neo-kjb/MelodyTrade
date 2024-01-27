@@ -1,6 +1,11 @@
-import React from 'react';
+import { Item } from '@melody-trade/api-interfaces';
 
-export default function DiskImage({ disk, isSelected, onSelect }) {
+export default function DiskImage(props: {
+  disk: Item;
+  isSelected: boolean;
+  onSelect: (disk: Item) => void;
+}) {
+  const { disk, isSelected, onSelect } = props;
   const handleClick = () => {
     onSelect(disk);
   };

@@ -18,7 +18,7 @@ export default function LoginForm() {
     }
   }, [results.isLoading, enqueueSnackbar]);
 
-  const handleSignupSubmit = async (e) => {
+  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const userData = {
@@ -33,22 +33,22 @@ export default function LoginForm() {
       enqueueSnackbar('Logged in successfully', { variant: 'success' });
       navigate('/');
     } catch (error) {
-      console.log(error);
-
-      if (error.status === 'FETCH_ERROR' || error.status === 500) {
-        enqueueSnackbar('Connection error, please refresh the page', {
-          variant: 'error',
-        });
-      }
-      if (
-        error.status === 401 ||
-        error.status === 404 ||
-        error.status === 400
-      ) {
-        setErrors('Incorrect Email or Password');
-        enqueueSnackbar('Login Failed', {
-          variant: 'error',
-        });
+      if ('status' in error) {
+        if (error.status === 'FETCH_ERROR' || error.status === 500) {
+          enqueueSnackbar('Connection error, please refresh the page', {
+            variant: 'error',
+          });
+        }
+        if (
+          error.status === 401 ||
+          error.status === 404 ||
+          error.status === 400
+        ) {
+          setErrors('Incorrect Email or Password');
+          enqueueSnackbar('Login Failed', {
+            variant: 'error',
+          });
+        }
       }
     }
   };

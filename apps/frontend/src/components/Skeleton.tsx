@@ -1,6 +1,9 @@
 import classNames from 'classnames';
-
-export default function Skeleton({ times, className }) {
+interface props {
+  times?: number;
+  className?: string;
+}
+export default function Skeleton({ times, className }: props) {
   const outerClassNames = classNames(
     'relative',
     'overflow-hidden',

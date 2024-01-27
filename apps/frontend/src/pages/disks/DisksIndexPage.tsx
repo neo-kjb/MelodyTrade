@@ -4,6 +4,7 @@ import Skeleton from '../../components/Skeleton';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Item } from '@melody-trade/api-interfaces';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -27,7 +28,7 @@ export default function DisksIndexPage() {
   }, [enqueueSnackbar, isError, isLoading]);
 
   const filteredDisks = isSuccess
-    ? data?.data?.filter((disk) =>
+    ? data?.data?.filter((disk: Item) =>
         disk.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
@@ -100,7 +101,9 @@ export default function DisksIndexPage() {
                 and start adding disks.
               </div>
             ) : (
-              currentDisks.map((disk) => <DiskItem key={disk.id} disk={disk} />)
+              currentDisks.map((disk: Item) => (
+                <DiskItem key={disk.id} disk={disk} />
+              ))
             ))}
         </div>
         {totalPages > 1 && (

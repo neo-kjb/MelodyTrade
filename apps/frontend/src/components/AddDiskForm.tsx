@@ -1,7 +1,14 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { useCreateDiskMutation } from '../store';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
+
+interface FormErrors {
+  name?: string;
+  description?: string;
+  imageURL?: string;
+  location?: string;
+}
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -10,7 +17,7 @@ export default function LoginForm() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [createDisk, results] = useCreateDiskMutation();
 
   useEffect(() => {
@@ -19,7 +26,7 @@ export default function LoginForm() {
     }
   }, [results.isLoading, enqueueSnackbar]);
 
-  const handleAddDisk = async (e: FormEvent) => {
+  const handleAddDisk = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const diskData = {
@@ -31,33 +38,33 @@ export default function LoginForm() {
 
     try {
       const data = await createDisk(diskData).unwrap();
-      console.log(data);
       enqueueSnackbar('Adding disk successfully', { variant: 'success' });
       navigate(`/disks/${data.disk.id}`);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if ('status' in error) {
+        if (error.status === 'FETCH_ERROR' || error.status === 500) {
+          enqueueSnackbar('Connection error, please refresh the page', {
+            variant: 'error',
+          });
+        }
+        if (error.status === 401) {
+          enqueueSnackbar('You Must be Logged in to Add a Disk', {
+            variant: 'error',
+          });
+        }
+        if (error.status === 400 && error.data.errors) {
+          const errorArray: { path: string; message: string }[] =
+            error.data.errors;
+          const errorObject: FormErrors = {};
+          enqueueSnackbar('Adding Disk Failed', {
+            variant: 'error',
+          });
+          errorArray.forEach((errorItem) => {
+            errorObject[errorItem.path as keyof FormErrors] = errorItem.message;
+          });
 
-      if (error.status === 'FETCH_ERROR' || error.status === 500) {
-        enqueueSnackbar('Connection error, please refresh the page', {
-          variant: 'error',
-        });
-      }
-      if (error.status === 401) {
-        enqueueSnackbar('You Must be Logged in to Add a Disk', {
-          variant: 'error',
-        });
-      }
-      if (error.status === 400 && error.data.errors) {
-        const errorArray = error.data.errors;
-        const errorObject = {};
-        enqueueSnackbar('Adding Disk Failed', {
-          variant: 'error',
-        });
-        errorArray.forEach((errorItem) => {
-          errorObject[errorItem.path] = errorItem.message;
-        });
-
-        setErrors(errorObject);
+          setErrors(errorObject);
+        }
       }
     }
   };

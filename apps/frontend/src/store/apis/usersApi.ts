@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getAuthToken } from '../../utils/getAuthToken';
 
 const usersApi = createApi({
   reducerPath: 'users',

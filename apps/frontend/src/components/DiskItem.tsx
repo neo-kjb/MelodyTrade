@@ -1,6 +1,8 @@
+import { Item } from '@melody-trade/api-interfaces';
 import { useNavigate } from 'react-router-dom';
 
-export default function DiskItem({ disk }) {
+export default function DiskItem(props: { disk: Item }) {
+  const { disk } = props;
   const navigate = useNavigate();
 
   return (

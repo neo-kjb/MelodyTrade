@@ -5,6 +5,7 @@ import Skeleton from '../../components/Skeleton';
 import { Link } from 'react-router-dom';
 import SwapList from '../../components/SwapList';
 import { getAuthToken } from '../../utils/getAuthToken';
+import { Swap } from '@melody-trade/api-interfaces';
 
 export default function SwapRequestPage() {
   const token = getAuthToken();
@@ -51,7 +52,7 @@ export default function SwapRequestPage() {
   } else {
     content = (
       <div className="grid grid-cols-1 gap-4">
-        {data.data?.map((swap) => (
+        {data.data?.map((swap: Swap) => (
           <SwapList key={swap.id} swap={swap} />
         ))}
       </div>

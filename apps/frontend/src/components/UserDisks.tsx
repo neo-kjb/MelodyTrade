@@ -2,8 +2,10 @@ import React from 'react';
 import { useGetDisksByUsernameQuery } from '../store';
 import Skeleton from './Skeleton';
 import { useNavigate } from 'react-router-dom';
+import { Item, User } from '@melody-trade/api-interfaces';
 
-export default function UserDisks({ user }) {
+export default function UserDisks(props: { user: User }) {
+  const { user } = props;
   const navigate = useNavigate();
   const { data, isLoading, isSuccess, isError } = useGetDisksByUsernameQuery(
     user.username,
@@ -21,7 +23,7 @@ export default function UserDisks({ user }) {
   if (isSuccess) {
     content = (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {data?.data?.map((disk, index) => (
+        {data?.data?.map((disk: Item, index: number) => (
           <div
             key={index}
             onClick={() => navigate(`/disks/${disk.id}`)}

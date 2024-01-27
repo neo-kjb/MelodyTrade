@@ -8,8 +8,10 @@ import {
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../utils/getAuthToken';
+import { Swap } from '@melody-trade/api-interfaces';
 
-const SwapList = ({ swap }) => {
+const SwapList = (props: { swap: Swap }) => {
+  const { swap } = props;
   const token = getAuthToken();
   const navigate = useNavigate();
   const [isSender, setIsSender] = useState(false);
