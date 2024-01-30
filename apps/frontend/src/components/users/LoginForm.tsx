@@ -1,57 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useLoginUserMutation } from '../../store';
-import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import useLoginUser from '../../hooks/users/useLoginUser';
 
 export default function LoginForm() {
-  const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState('');
-  const [loginUser, results] = useLoginUserMutation();
-
-  useEffect(() => {
-    if (results.isLoading) {
-      enqueueSnackbar('Logging in, please wait...', { variant: 'info' });
-    }
-  }, [results.isLoading, enqueueSnackbar]);
-
-  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const userData = {
-      email,
-      password,
-    };
-
-    try {
-      const data = await loginUser(userData).unwrap();
-
-      localStorage.setItem('token', data.accessToken);
-      enqueueSnackbar('Logged in successfully', { variant: 'success' });
-      navigate('/');
-    } catch (error) {
-      if ('status' in error) {
-        if (error.status === 'FETCH_ERROR' || error.status === 500) {
-          enqueueSnackbar('Connection error, please refresh the page', {
-            variant: 'error',
-          });
-        }
-        if (
-          error.status === 401 ||
-          error.status === 404 ||
-          error.status === 400
-        ) {
-          setErrors('Incorrect Email or Password');
-          enqueueSnackbar('Login Failed', {
-            variant: 'error',
-          });
-        }
-      }
-    }
-  };
+  const { handleSignupSubmit, errors, email, setEmail, password, setPassword } =
+    useLoginUser();
 
   return (
     <div className="flex items-center min-h-screen bg-gray-50 bg-[url(https://wallpaperaccess.com/full/1891379.png)] bg-cover bg-center">

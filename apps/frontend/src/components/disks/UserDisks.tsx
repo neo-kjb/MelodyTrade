@@ -1,5 +1,5 @@
 import { User } from '@melody-trade/api-interfaces';
-import useGetUserDisks from '../../hooks/users/useGetUserDisks';
+import useGetUserDisks from '../../hooks/disks/useGetUserDisks';
 
 export default function UserDisks(props: { user: User }) {
   const { user } = props;
