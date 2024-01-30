@@ -10,7 +10,9 @@
       "vitest",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
-    ]
+    ],
+    "declaration": true
+
   },
   "include": [
     "vite.config.ts",

@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
+    "composite": true,
     "jsx": "react-jsx",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client", "vitest"]
+    "types": ["vite/client", "vitest"],
+    "declaration": true
+
   },
   "files": [],
   "include": [],
