@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetDiskDetailsQuery } from '../../store';
 import { enqueueSnackbar } from 'notistack';
-import NotFound from '../../components/NotFound';
-import EditDiskForm from '../../components/EditDiskForm';
+import NotFound from '../../layouts/NotFound';
+import EditDiskForm from '../../components/disks/EditDiskForm';
 
 export default function EditDiskPage() {
   const { diskId } = useParams();

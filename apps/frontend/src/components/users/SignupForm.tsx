@@ -1,54 +1,62 @@
 import { useState, useEffect } from 'react';
-import { useLoginUserMutation } from '../store';
+import { useAddUserMutation } from '../../store';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-export default function LoginForm() {
+interface ErrorObject {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
+export default function SignupForm() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState('');
-  const [loginUser, results] = useLoginUserMutation();
+  const [errors, setErrors] = useState<ErrorObject>({});
+
+  const [addUser, results] = useAddUserMutation();
 
   useEffect(() => {
     if (results.isLoading) {
-      enqueueSnackbar('Logging in, please wait...', { variant: 'info' });
+      enqueueSnackbar('Creating user, please wait...', { variant: 'info' });
     }
   }, [results.isLoading, enqueueSnackbar]);
 
   const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const userData = {
+      username,
       email,
       password,
     };
-
     try {
-      const data = await loginUser(userData).unwrap();
+      const data = await addUser(userData).unwrap();
+      console.log(data);
 
       localStorage.setItem('token', data.accessToken);
-      enqueueSnackbar('Logged in successfully', { variant: 'success' });
+      enqueueSnackbar('User created successfully', { variant: 'success' });
       navigate('/');
-    } catch (error) {
-      if ('status' in error) {
-        if (error.status === 'FETCH_ERROR' || error.status === 500) {
-          enqueueSnackbar('Connection error, please refresh the page', {
-            variant: 'error',
-          });
-        }
-        if (
-          error.status === 401 ||
-          error.status === 404 ||
-          error.status === 400
-        ) {
-          setErrors('Incorrect Email or Password');
-          enqueueSnackbar('Login Failed', {
-            variant: 'error',
-          });
-        }
+    } catch (error: any) {
+      if (error.status === 'FETCH_ERROR' || error.status === 500) {
+        enqueueSnackbar('Connection error, please refresh the page', {
+          variant: 'error',
+        });
+      }
+      if (error.status === 400 && error.data.errors) {
+        const errorArray = error.data.errors;
+        const errorObject: ErrorObject = {};
+        enqueueSnackbar('Creating User Failed', {
+          variant: 'error',
+        });
+        errorArray.forEach((errorItem: { path: string; message: string }) => {
+          errorObject[errorItem.path as keyof ErrorObject] = errorItem.message;
+        });
+
+        setErrors(errorObject);
       }
     }
   };
@@ -60,7 +68,7 @@ export default function LoginForm() {
           <div className="h-32 md:h-auto md:w-1/2">
             <img
               className="object-cover w-full h-full"
-              src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="img"
             />
           </div>
@@ -85,10 +93,28 @@ export default function LoginForm() {
                 </svg>
               </div>
               <h1 className="mb-4 text-2xl font-bold text-center text-gray-700">
-                Login
+                Sign up
               </h1>
-              {errors && <p className="text-red-500 text-sm mt-1">{errors}</p>}
-
+              <div>
+                <label htmlFor="name" className="block text-sm">
+                  Name
+                </label>
+                <input
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                  id="name"
+                  name="name"
+                  type="text"
+                  className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="Name"
+                  required
+                />
+                {errors.username && (
+                  <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                )}
+              </div>
               <div className="mt-4">
                 <label htmlFor="email" className="block text-sm">
                   Email
@@ -105,6 +131,9 @@ export default function LoginForm() {
                   placeholder="Email Address"
                   required
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div>
@@ -123,21 +152,24 @@ export default function LoginForm() {
                   type="password"
                   required
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
               </div>
               <button
                 type="submit"
                 className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
               >
-                Login
+                Sign up
               </button>
               <div className="mt-4 text-center">
                 <p className="text-sm">
-                  Dont have an account yet?{' '}
+                  Already has an account?{' '}
                   <Link
-                    to="/users/signup"
+                    to="/users/login"
                     className="text-blue-600 hover:underline"
                   >
-                    Sign up.
+                    Log in.
                   </Link>
                 </p>
               </div>

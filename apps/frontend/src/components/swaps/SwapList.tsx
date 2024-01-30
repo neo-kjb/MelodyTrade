@@ -4,10 +4,10 @@ import {
   useGetCurUserQuery,
   useRejectSwapMutation,
   useAcceptSwapMutation,
-} from '../store';
+} from '../../store';
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import { getAuthToken } from '../utils/getAuthToken';
+import { getAuthToken } from '../../utils/getAuthToken';
 import { Swap } from '@melody-trade/api-interfaces';
 
 const SwapList = (props: { swap: Swap }) => {

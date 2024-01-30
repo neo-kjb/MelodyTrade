@@ -1,6 +1,6 @@
 import React from 'react';
-import { useGetSwapHistoryQuery } from '../store';
-import Skeleton from './Skeleton';
+import { useGetSwapHistoryQuery } from '../../store';
+import Skeleton from '../../layouts/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import { Swap } from '@melody-trade/api-interfaces';
 

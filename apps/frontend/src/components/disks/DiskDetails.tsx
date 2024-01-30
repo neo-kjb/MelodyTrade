@@ -5,9 +5,9 @@ import {
   useCreateSwapMutation,
   useGetCurUserQuery,
   useDeleteDiskMutation,
-} from '../store';
+} from '../../store';
 import { useSnackbar } from 'notistack';
-import { getAuthToken } from '../utils/getAuthToken';
+import { getAuthToken } from '../../utils/getAuthToken';
 import { Item } from '@melody-trade/api-interfaces';
 
 export default function DiskDetails(props: { disk: Item }) {

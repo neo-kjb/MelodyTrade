@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCreateDiskMutation } from '../store';
+import { useCreateDiskMutation } from '../../store';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 

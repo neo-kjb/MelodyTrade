@@ -1,6 +1,6 @@
 import { useGetAllDisksQuery } from '../../store';
-import DiskItem from '../../components/DiskItem';
-import Skeleton from '../../components/Skeleton';
+import DiskItem from '../../components/disks/DiskItem';
+import Skeleton from '../../layouts/Skeleton';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -93,13 +93,7 @@ export default function DisksIndexPage() {
           {isError && <div className="text-red-600">Error Loading Disks!</div>}
           {isSuccess &&
             (currentDisks.length === 0 ? (
-              <div className="text-xl m-6 text-white">
-                No disks found.{' '}
-                <Link to={'/users/login'} className="text-blue-700">
-                  Login
-                </Link>{' '}
-                and start adding disks.
-              </div>
+              <div className="text-xl m-6 text-white">No disks found.</div>
             ) : (
               currentDisks.map((disk: Item) => (
                 <DiskItem key={disk.id} disk={disk} />

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useGetPendingSwapsQuery } from '../../store';
 import { useSnackbar } from 'notistack';
-import Skeleton from '../../components/Skeleton';
+import Skeleton from '../../layouts/Skeleton';
 import { Link } from 'react-router-dom';
-import SwapList from '../../components/SwapList';
+import SwapList from '../../components/swaps/SwapList';
 import { getAuthToken } from '../../utils/getAuthToken';
 import { Swap } from '@melody-trade/api-interfaces';
 

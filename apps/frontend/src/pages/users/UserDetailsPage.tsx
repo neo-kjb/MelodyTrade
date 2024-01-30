@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetCurUserQuery, useGetUserDetailsQuery } from '../../store';
-import UserProfile from '../../components/UserProfile';
-import UserDisks from '../../components/UserDisks';
-import SwapHistory from '../../components/SwapHistory';
+import UserProfile from '../../components/users/UserProfile';
+import UserDisks from '../../components/disks/UserDisks';
+import SwapHistory from '../../components/swaps/SwapHistory';
 import { enqueueSnackbar } from 'notistack';
-import NotFound from '../../components/NotFound';
-import Skeleton from '../../components/Skeleton';
+import NotFound from '../../layouts/NotFound';
+import Skeleton from '../../layouts/Skeleton';
 import { getAuthToken } from '../../utils/getAuthToken';
 
 export default function UserDetailsPage() {

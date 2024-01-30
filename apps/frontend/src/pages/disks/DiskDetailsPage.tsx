@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useGetDiskDetailsQuery } from '../../store';
-import Skeleton from '../../components/Skeleton';
-import NotFound from '../../components/NotFound';
+import Skeleton from '../../layouts/Skeleton';
+import NotFound from '../../layouts/NotFound';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
-import DiskDetails from '../../components/DiskDetails';
+import DiskDetails from '../../components/disks/DiskDetails';
 
 export default function DiskDetailsPage() {
   const { enqueueSnackbar } = useSnackbar();

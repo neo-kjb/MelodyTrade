@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useGetCurUserQuery, useGetDisksByUsernameQuery } from '../store';
+import { useGetCurUserQuery, useGetDisksByUsernameQuery } from '../../store';
 import DiskImage from './DiskImage';
 import { Link } from 'react-router-dom';
-import { getAuthToken } from '../utils/getAuthToken';
+import { getAuthToken } from '../../utils/getAuthToken';
 import { Item } from '@melody-trade/api-interfaces';
 
 interface ModalProps {

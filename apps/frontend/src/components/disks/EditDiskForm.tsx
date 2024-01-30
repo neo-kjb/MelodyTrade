@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useEditDiskMutation } from '../store';
+import { useEditDiskMutation } from '../../store';
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '@melody-trade/api-interfaces';

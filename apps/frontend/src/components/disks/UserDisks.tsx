@@ -1,6 +1,6 @@
 import React from 'react';
-import { useGetDisksByUsernameQuery } from '../store';
-import Skeleton from './Skeleton';
+import { useGetDisksByUsernameQuery } from '../../store';
+import Skeleton from '../../layouts/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import { Item, User } from '@melody-trade/api-interfaces';
 
