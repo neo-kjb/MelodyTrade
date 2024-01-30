@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import {
-  useCancelSwapMutation,
-  useGetCurUserQuery,
-  useRejectSwapMutation,
-  useAcceptSwapMutation,
-} from '../../store';
-import { enqueueSnackbar } from 'notistack';
+import { useGetCurUserQuery } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../../utils/getAuthToken';
 import { Swap } from '@melody-trade/api-interfaces';
+import useCancelSwap from '../../hooks/swaps/useCancelSwap';
+import useAcceptSwap from '../../hooks/swaps/useAcceptSwap';
+import useRejectSwap from '../../hooks/swaps/useRejectSwap';
 
 const SwapList = (props: { swap: Swap }) => {
   const { swap } = props;
@@ -18,9 +15,9 @@ const SwapList = (props: { swap: Swap }) => {
   const [isReceiver, setIsReceiver] = useState(false);
   const { data, isSuccess } = useGetCurUserQuery(token);
 
-  const [cancelSwap, cancelResults] = useCancelSwapMutation();
-  const [acceptSwap, acceptResults] = useAcceptSwapMutation();
-  const [rejectSwap, rejectResults] = useRejectSwapMutation();
+  const { handleCancelRequest } = useCancelSwap(swap);
+  const { handleAcceptRequest } = useAcceptSwap(swap);
+  const { handleRejectRequest } = useRejectSwap(swap);
 
   useEffect(() => {
     let currUserId;
@@ -40,65 +37,6 @@ const SwapList = (props: { swap: Swap }) => {
     swap.receivedItem.userId,
   ]);
 
-  const handleCancelRequest = () => {
-    cancelSwap(swap.id);
-  };
-  console.log(cancelResults);
-  const handleAcceptRequest = () => {
-    acceptSwap(swap.id);
-  };
-  const handleRejectRequest = () => {
-    rejectSwap(swap.id);
-  };
-
-  useEffect(() => {
-    if (cancelResults.isSuccess) {
-      enqueueSnackbar('Swap request canceled successfully', {
-        variant: 'success',
-      });
-    }
-    if (cancelResults.isLoading) {
-      enqueueSnackbar('Canceling swap request...', { variant: 'info' });
-    }
-    if (cancelResults.isError) {
-      enqueueSnackbar(cancelResults.error?.data.message, { variant: 'error' });
-    }
-    if (acceptResults.isSuccess) {
-      enqueueSnackbar('Swap request accepted successfully', {
-        variant: 'success',
-      });
-    }
-    if (acceptResults.isLoading) {
-      enqueueSnackbar('Accepting swap request...', { variant: 'info' });
-    }
-    if (acceptResults.isError) {
-      enqueueSnackbar(acceptResults.error?.data.message, { variant: 'error' });
-    }
-    if (rejectResults.isSuccess) {
-      enqueueSnackbar('Swap request rejected successfully', {
-        variant: 'success',
-      });
-    }
-    if (rejectResults.isLoading) {
-      enqueueSnackbar('Rejecting swap request...', { variant: 'info' });
-    }
-    if (rejectResults.isError) {
-      enqueueSnackbar(rejectResults.error?.data.message, { variant: 'error' });
-    }
-  }, [
-    cancelResults.isSuccess,
-    cancelResults.isLoading,
-    cancelResults.isError,
-    cancelResults.error?.data.message,
-    acceptResults.isSuccess,
-    acceptResults.isLoading,
-    acceptResults.isError,
-    acceptResults.error?.data.message,
-    rejectResults.isSuccess,
-    rejectResults.isLoading,
-    rejectResults.isError,
-    rejectResults.error?.data.message,
-  ]);
   return (
     <div className="flex flex-col space-y-4  p-6 rounded-lg shadow-lg mb-4 transform transition duration-300 hover:scale-105">
       <div className="flex flex-col sm:flex-row items-center p-4 border border-gray-500 rounded-md">
