@@ -1,65 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useAddUserMutation } from '../../store';
-import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
-
-interface ErrorObject {
-  username?: string;
-  email?: string;
-  password?: string;
-}
+import useCreateUser from '../../hooks/users/useCreateUser';
 
 export default function SignupForm() {
-  const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<ErrorObject>({});
-
-  const [addUser, results] = useAddUserMutation();
-
-  useEffect(() => {
-    if (results.isLoading) {
-      enqueueSnackbar('Creating user, please wait...', { variant: 'info' });
-    }
-  }, [results.isLoading, enqueueSnackbar]);
-
-  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const userData = {
-      username,
-      email,
-      password,
-    };
-    try {
-      const data = await addUser(userData).unwrap();
-      console.log(data);
-
-      localStorage.setItem('token', data.accessToken);
-      enqueueSnackbar('User created successfully', { variant: 'success' });
-      navigate('/');
-    } catch (error: any) {
-      if (error.status === 'FETCH_ERROR' || error.status === 500) {
-        enqueueSnackbar('Connection error, please refresh the page', {
-          variant: 'error',
-        });
-      }
-      if (error.status === 400 && error.data.errors) {
-        const errorArray = error.data.errors;
-        const errorObject: ErrorObject = {};
-        enqueueSnackbar('Creating User Failed', {
-          variant: 'error',
-        });
-        errorArray.forEach((errorItem: { path: string; message: string }) => {
-          errorObject[errorItem.path as keyof ErrorObject] = errorItem.message;
-        });
-
-        setErrors(errorObject);
-      }
-    }
-  };
+  const {
+    handleSignupSubmit,
+    username,
+    setUsername,
+    password,
+    setPassword,
+    email,
+    setEmail,
+    errors,
+  } = useCreateUser();
 
   return (
     <div className="flex items-center min-h-screen bg-gray-50 bg-[url(https://wallpaperaccess.com/full/1891379.png)] bg-cover bg-center">
