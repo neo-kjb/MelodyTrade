@@ -6,5 +6,5 @@ export default function UserDetailsPage() {
 
   const { content } = useGetUserDetails(userId);
 
-  return { content };
+  return content;
 }
