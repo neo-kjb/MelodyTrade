@@ -18,7 +18,7 @@ export default function useGetUserDetails(userId: string | undefined) {
   const isPageOwner = CurrentUserData?.currUserId === data?.id;
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       enqueueSnackbar('Loading user data...', { variant: 'info' });
     }
     if (isError) {

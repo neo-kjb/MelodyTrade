@@ -14,7 +14,7 @@ export default function useGetSwapRequests() {
   });
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       enqueueSnackbar('Loading Swap Requests...', { variant: 'info' });
     }
   }, [isLoading]);
